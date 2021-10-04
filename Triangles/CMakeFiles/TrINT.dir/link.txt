@@ -1,0 +1,1 @@
+/usr/bin/c++    -rdynamic CMakeFiles/TrINT.dir/TrINT.cpp.o  -o TrINT 

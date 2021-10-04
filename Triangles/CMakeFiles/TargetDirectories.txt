@@ -1,0 +1,3 @@
+/home/michael/Documents/C/C++/Triangles/CMakeFiles/rebuild_cache.dir
+/home/michael/Documents/C/C++/Triangles/CMakeFiles/edit_cache.dir
+/home/michael/Documents/C/C++/Triangles/CMakeFiles/TrINT.dir
