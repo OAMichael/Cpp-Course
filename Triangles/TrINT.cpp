@@ -32,15 +32,14 @@ int main()
 				}
 	}  
 
-//	delete[] TrSet;
-
-//	std::cout << "Those triangles have intersections with others:" << std::endl;
+	std::cout << "#Tr Valid/Intsct" << std::endl;
 	for (i = 0; i < N; i++){
-//		std::cout << i + 1 << ") ";
+
 		if(TrSet[i].IntersectIndex != 0)
-			std::cout << i << "\t" << TrSet[i].IsValid() << TrSet[i].IntersectIndex <<   std::endl;
-		else std::cout << "\t" << TrSet[i].IsValid() << TrSet[i].IntersectIndex <<  std::endl;
+			std::cout << i << "\t" << TrSet[i].IsValid() << "/" << TrSet[i].IntersectIndex << std::endl;
+		else std::cout << "\t" << TrSet[i].IsValid() << "/" << TrSet[i].IntersectIndex << std::endl;
 	}
+	delete[] TrSet;
 
 	return 0;
 }

@@ -365,8 +365,6 @@ namespace Geom {
 
         Point OInt = {a.m.x + t * a1.x, a.m.y + t * a1.y, a.m.z + t * a1.z};
 
-        //std::cout << OInt.x << " " << OInt.y << " " << OInt.z << " " << t << std::endl;
-
         if((a.m - OInt) * (a.n - OInt) <= 0 && (b.m - OInt) * (b.n - OInt) <= 0)                        
             return true;
 
