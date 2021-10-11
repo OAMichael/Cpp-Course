@@ -111,17 +111,17 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named TrINT
+# Target rules for targets named TrINT.exe
 
 # Build rule for target.
-TrINT: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 TrINT
-.PHONY : TrINT
+TrINT.exe: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 TrINT.exe
+.PHONY : TrINT.exe
 
 # fast build rule for target.
-TrINT/fast:
-	$(MAKE) -f CMakeFiles/TrINT.dir/build.make CMakeFiles/TrINT.dir/build
-.PHONY : TrINT/fast
+TrINT.exe/fast:
+	$(MAKE) -f CMakeFiles/TrINT.exe.dir/build.make CMakeFiles/TrINT.exe.dir/build
+.PHONY : TrINT.exe/fast
 
 TrINT.o: TrINT.cpp.o
 
@@ -129,7 +129,7 @@ TrINT.o: TrINT.cpp.o
 
 # target to build an object file
 TrINT.cpp.o:
-	$(MAKE) -f CMakeFiles/TrINT.dir/build.make CMakeFiles/TrINT.dir/TrINT.cpp.o
+	$(MAKE) -f CMakeFiles/TrINT.exe.dir/build.make CMakeFiles/TrINT.exe.dir/TrINT.cpp.o
 .PHONY : TrINT.cpp.o
 
 TrINT.i: TrINT.cpp.i
@@ -138,7 +138,7 @@ TrINT.i: TrINT.cpp.i
 
 # target to preprocess a source file
 TrINT.cpp.i:
-	$(MAKE) -f CMakeFiles/TrINT.dir/build.make CMakeFiles/TrINT.dir/TrINT.cpp.i
+	$(MAKE) -f CMakeFiles/TrINT.exe.dir/build.make CMakeFiles/TrINT.exe.dir/TrINT.cpp.i
 .PHONY : TrINT.cpp.i
 
 TrINT.s: TrINT.cpp.s
@@ -147,7 +147,7 @@ TrINT.s: TrINT.cpp.s
 
 # target to generate assembly for a file
 TrINT.cpp.s:
-	$(MAKE) -f CMakeFiles/TrINT.dir/build.make CMakeFiles/TrINT.dir/TrINT.cpp.s
+	$(MAKE) -f CMakeFiles/TrINT.exe.dir/build.make CMakeFiles/TrINT.exe.dir/TrINT.cpp.s
 .PHONY : TrINT.cpp.s
 
 # Help Target
@@ -158,7 +158,7 @@ help:
 	@echo "... depend"
 	@echo "... rebuild_cache"
 	@echo "... edit_cache"
-	@echo "... TrINT"
+	@echo "... TrINT.exe"
 	@echo "... TrINT.o"
 	@echo "... TrINT.i"
 	@echo "... TrINT.s"

@@ -53,7 +53,7 @@ CMAKE_BINARY_DIR = /home/michael/Documents/C/C++/Triangles
 # Directory level rules for the build root directory
 
 # The main recursive "all" target.
-all: CMakeFiles/TrINT.dir/all
+all: CMakeFiles/TrINT.exe.dir/all
 
 .PHONY : all
 
@@ -63,36 +63,36 @@ preinstall:
 .PHONY : preinstall
 
 # The main recursive "clean" target.
-clean: CMakeFiles/TrINT.dir/clean
+clean: CMakeFiles/TrINT.exe.dir/clean
 
 .PHONY : clean
 
 #=============================================================================
-# Target rules for target CMakeFiles/TrINT.dir
+# Target rules for target CMakeFiles/TrINT.exe.dir
 
 # All Build rule for target.
-CMakeFiles/TrINT.dir/all:
-	$(MAKE) -f CMakeFiles/TrINT.dir/build.make CMakeFiles/TrINT.dir/depend
-	$(MAKE) -f CMakeFiles/TrINT.dir/build.make CMakeFiles/TrINT.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/michael/Documents/C/C++/Triangles/CMakeFiles --progress-num=1,2 "Built target TrINT"
-.PHONY : CMakeFiles/TrINT.dir/all
+CMakeFiles/TrINT.exe.dir/all:
+	$(MAKE) -f CMakeFiles/TrINT.exe.dir/build.make CMakeFiles/TrINT.exe.dir/depend
+	$(MAKE) -f CMakeFiles/TrINT.exe.dir/build.make CMakeFiles/TrINT.exe.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/michael/Documents/C/C++/Triangles/CMakeFiles --progress-num=1,2 "Built target TrINT.exe"
+.PHONY : CMakeFiles/TrINT.exe.dir/all
 
 # Build rule for subdir invocation for target.
-CMakeFiles/TrINT.dir/rule: cmake_check_build_system
+CMakeFiles/TrINT.exe.dir/rule: cmake_check_build_system
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/michael/Documents/C/C++/Triangles/CMakeFiles 2
-	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/TrINT.dir/all
+	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/TrINT.exe.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/michael/Documents/C/C++/Triangles/CMakeFiles 0
-.PHONY : CMakeFiles/TrINT.dir/rule
+.PHONY : CMakeFiles/TrINT.exe.dir/rule
 
 # Convenience name for target.
-TrINT: CMakeFiles/TrINT.dir/rule
+TrINT.exe: CMakeFiles/TrINT.exe.dir/rule
 
-.PHONY : TrINT
+.PHONY : TrINT.exe
 
 # clean rule for target.
-CMakeFiles/TrINT.dir/clean:
-	$(MAKE) -f CMakeFiles/TrINT.dir/build.make CMakeFiles/TrINT.dir/clean
-.PHONY : CMakeFiles/TrINT.dir/clean
+CMakeFiles/TrINT.exe.dir/clean:
+	$(MAKE) -f CMakeFiles/TrINT.exe.dir/build.make CMakeFiles/TrINT.exe.dir/clean
+.PHONY : CMakeFiles/TrINT.exe.dir/clean
 
 #=============================================================================
 # Special targets to cleanup operation of make.
