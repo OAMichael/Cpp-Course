@@ -347,14 +347,14 @@ namespace Geom {
     template <typename T>
     T Determ(const Point<T>& a, const Point<T>& b, const Point<T>& c, const Point<T>& d)
     {
-        return  ((a.x - d.x)*((b.y - d.y)*(c.z - d.z) - (c.y - d.y)*(b.z - d.z))                      //checking if the 4th point lies 
-              -  (a.y - d.y)*((b.x - d.x)*(c.z - d.z) - (c.x - d.x)*(b.z - d.z))                      //in the plane induced by other points
+        return  ((a.x - d.x)*((b.y - d.y)*(c.z - d.z) - (c.y - d.y)*(b.z - d.z))                        //checking if the 4th point lies 
+              -  (a.y - d.y)*((b.x - d.x)*(c.z - d.z) - (c.x - d.x)*(b.z - d.z))                        //in the plane induced by other points
               +  (a.z - d.z)*((b.x - d.x)*(c.y - d.y) - (c.x - d.x)*(b.y - d.y))); 
     }
 
 
     template <typename T>
-    void SwapPoints(Point<T>& a, Point<T>& b)                                                         //swapping two points
+    void SwapPoints(Point<T>& a, Point<T>& b)                                                           //swapping two points
     {
         Point<T> tmp = {0, 0, 0};
         tmp.x = a.x;
