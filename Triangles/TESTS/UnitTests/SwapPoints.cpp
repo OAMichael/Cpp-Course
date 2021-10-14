@@ -7,11 +7,11 @@
 
 int main()
 {
-    Geom::Point A{0, 1, 2};
-    Geom::Point B{-1, 2, 1};
+    Geom::Point<double> A{0.0, 1.0, 2.0};
+    Geom::Point<double> B{-1.0, 2.0, 1.0};
     
-    Geom::SwapPoints(A, B);
-    if (A == Geom::Point{-1, 2, 1} && B == Geom::Point{0, 1, 2})
+    Geom::SwapPoints<double>(A, B);
+    if (A == Geom::Point<double>{-1, 2, 1} && B == Geom::Point<double>{0, 1, 2})
         std::cout << "Test 1:\t Passed" << std::endl;
     else
         std::cout << "Test 1:\t Failed" << std::endl;

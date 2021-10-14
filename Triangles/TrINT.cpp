@@ -10,7 +10,7 @@ int main()
 	int N = 0;
 	std::cin >> N;
 
-	Geom::Triangle* TrSet = new Geom::Triangle[N]{};
+	Geom::Triangle<double>* TrSet = new Geom::Triangle<double>[N]{};
 
 	int i = 0, j = 0;
 
