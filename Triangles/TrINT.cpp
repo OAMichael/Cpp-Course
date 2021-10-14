@@ -32,12 +32,16 @@ int main()
 				}
 	}  
 
-	std::cout << "#Tr Valid/Intsct" << std::endl;
+//	std::cout << "#Tr Valid/Intsct" << std::endl;
 	for (i = 0; i < N; i++){
 
 		if(TrSet[i].IntersectIndex != 0)
-			std::cout << i << "\t" << TrSet[i].IsValid() << "/" << TrSet[i].IntersectIndex << std::endl;
-		else std::cout << "\t" << TrSet[i].IsValid() << "/" << TrSet[i].IntersectIndex << std::endl;
+		{
+			std::cout << i;
+//			std::cout << "\t" << TrSet[i].IsValid() << "/" << TrSet[i].IntersectIndex;
+			std::cout << std::endl;
+		}
+//		else std::cout << "\t" << TrSet[i].IsValid() << "/" << TrSet[i].IntersectIndex << std::endl;
 	}
 	delete[] TrSet;
 

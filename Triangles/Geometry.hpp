@@ -226,7 +226,7 @@ namespace Geom {
     void SwapPoints(Point<T>& a, Point<T>& b);
 
     template <typename T>
-    bool Is2DIntersect(Triangle<T>& T1, Triangle<T>& T2);
+    bool Is2DIntersect(const Triangle<T>& T1, const Triangle<T>& T2);
 
     template <typename T>
     bool IsParallel(const Vector<T>& a, const Vector<T>& b);
@@ -244,8 +244,8 @@ namespace Geom {
     bool IsPointInTriangle(const Triangle<T>& Tr, const Point<T>& p);
 
     template <typename T>
-    bool IsNotValidIntersect(Triangle<T>& T1, Triangle<T>& T2);
-    
+    bool IsNotValidIntersect(const Triangle<T>& T1, const Triangle<T>& T2);
+
     template <typename T>
     T Determ(const Point<T>& a, const Point<T>& b, const Point<T>& c, const Point<T>& d);
 
@@ -331,7 +331,11 @@ namespace Geom {
     template <typename T>
     bool Is2DIntersect(Triangle<T>& T1, Triangle<T>& T2)
     {
-        if(Is2DSegmIntersect<T>(T1.pq, T2.pq) || Is2DSegmIntersect<T>(T1.pq, T2.qr) || Is2DSegmIntersect<T>(T1.pq, T2.rp) ||   //checking if one of 
+        if(IsPointInTriangle<T>(T1, T2.p) || IsPointInTriangle<T>(T1, T2.q) || IsPointInTriangle<T>(T1, T2.r) ||               //checking if point of
+           IsPointInTriangle<T>(T2, T1.p) || IsPointInTriangle<T>(T2, T1.q) || IsPointInTriangle<T>(T2, T1.r) ||               //one triangle lies in 
+                                                                                                                               //other
+
+           Is2DSegmIntersect<T>(T1.pq, T2.pq) || Is2DSegmIntersect<T>(T1.pq, T2.qr) || Is2DSegmIntersect<T>(T1.pq, T2.rp) ||   //checking if one of 
            Is2DSegmIntersect<T>(T1.qr, T2.pq) || Is2DSegmIntersect<T>(T1.qr, T2.qr) || Is2DSegmIntersect<T>(T1.qr, T2.rp) ||   //sides of triangle
            Is2DSegmIntersect<T>(T1.rp, T2.pq) || Is2DSegmIntersect<T>(T1.rp, T2.qr) || Is2DSegmIntersect<T>(T1.rp, T2.rp))     //crosses edge of another
         return true;
@@ -343,8 +347,8 @@ namespace Geom {
     template <typename T>
     T Determ(const Point<T>& a, const Point<T>& b, const Point<T>& c, const Point<T>& d)
     {
-        return  ((a.x - d.x)*((b.y - d.y)*(c.z - d.z) - (c.y - d.y)*(b.z - d.z))                //checking if the 4th point lies 
-              -  (a.y - d.y)*((b.x - d.x)*(c.z - d.z) - (c.x - d.x)*(b.z - d.z))                //in the plane induced by other points
+        return  ((a.x - d.x)*((b.y - d.y)*(c.z - d.z) - (c.y - d.y)*(b.z - d.z))                      //checking if the 4th point lies 
+              -  (a.y - d.y)*((b.x - d.x)*(c.z - d.z) - (c.x - d.x)*(b.z - d.z))                      //in the plane induced by other points
               +  (a.z - d.z)*((b.x - d.x)*(c.y - d.y) - (c.x - d.x)*(b.y - d.y))); 
     }
 
@@ -430,8 +434,12 @@ namespace Geom {
         Vector<T> Oq = Tr.q - O;
         Vector<T> Or = Tr.r - O;
 
-        if( acos((Op * Oq)/(Op.GetLenght() * Oq.GetLenght())) + acos((Oq * Or)/(Oq.GetLenght() * Or.GetLenght())) + 
-            acos((Or * Op)/(Or.GetLenght() * Op.GetLenght())) < 2.0 * M_PI)
+        double OpLenght = Op.GetLenght();
+        double OqLenght = Oq.GetLenght();
+        double OrLenght = Or.GetLenght();
+
+        if(OpLenght != 0 && OqLenght != 0 && OqLenght != 0 && (acos((Op * Oq)/(OpLenght * OqLenght)) + acos((Oq * Or)/(OqLenght * OrLenght)) + 
+            acos((Or * Op)/(OrLenght * OpLenght)) < 2.0 * M_PI))
             return false;
 
         return true;
@@ -451,15 +459,17 @@ namespace Geom {
 
             if(T1p2 * T1q2 <= 0 || T1p2 * T1r2 <= 0 || T1q2 * T1r2 <= 0)
             {
+                if(T1p2 == 0 || T1q2 == 0 || T1r2 == 0)
+                    return (IsPointInTriangle(T1, T2.p) || IsPointInTriangle(T1, T2.q) || IsPointInTriangle(T1, T2.r));
 
                 Vector<T> n = (T1.q - T1.p) ^ (T1.r - T1.q);
                 double t = 0;
 
-                if ((T1.p - T2.p) * n != 0)
+                if ((T2.p - T2.q) * n != 0)
                     t = ((T1.p - T2.p) * n)/((T2.p - T2.q) * n);
 
                 // point of intersection of T1's plane and T2-line
-                Point<T> O{T2.p.x - T1.p.x + t * (T2.p.x - T2.q.x), T2.p.y - T1.p.y + t * (T2.p.y - T2.q.y), T2.p.z - T1.p.z + t * (T2.p.z - T2.q.z)};
+                Point<T> O{T2.p.x + t * (T2.p.x - T2.q.x), T2.p.y + t * (T2.p.y - T2.q.y), T2.p.z + t * (T2.p.z - T2.q.z)};
 
                 return IsPointInTriangle<T>(T1, O);
             }
@@ -477,14 +487,17 @@ namespace Geom {
 
             if(T2p1 * T2q1 <= 0 || T2p1 * T2r1 <= 0 || T2q1 * T2r1 <= 0)
             {
+                if(T2p1 == 0 || T2q1 == 0 || T2r1 == 0)
+                    return (IsPointInTriangle(T2, T1.p) || IsPointInTriangle(T2, T1.q) || IsPointInTriangle(T2, T1.r));
+
                 Vector<T> n = (T2.q - T2.p) ^ (T2.r - T2.q);
                 double t = 0;
 
-                if ((T2.p - T1.p) * n != 0)
+                if ((T1.p - T1.q) * n != 0)
                     t = ((T2.p - T1.p) * n)/((T1.p - T1.q) * n);
 
                 // point of intersection of T2's plane and T1-line
-                Point<T> O{T1.p.x - T2.p.x + t * (T1.p.x - T1.q.x), T1.p.y - T2.p.y + t * (T1.p.y - T1.q.y), T1.p.z - T2.p.z + t * (T1.p.z - T1.q.z)};
+                Point<T> O{T1.p.x + t * (T1.p.x - T1.q.x), T1.p.y + t * (T1.p.y - T1.q.y), T1.p.z + t * (T1.p.z - T1.q.z)};
 
                 return IsPointInTriangle<T>(T2, O);
             }
@@ -493,6 +506,9 @@ namespace Geom {
         }
 
         // both invalid
+        if((T1.p == T1.q) && (T1.p == T1.r) && (T2.p == T2.q) && (T2.p == T2.r))
+            return (T1.p == T2.p);
+
         return (Is3DSegmIntersect<T>(T1.pq, T2.pq) || Is3DSegmIntersect<T>(T1.pq, T2.qr) || Is3DSegmIntersect<T>(T1.pq, T2.rp) || 
                 Is3DSegmIntersect<T>(T1.qr, T2.pq) || Is3DSegmIntersect<T>(T1.qr, T2.qr) || Is3DSegmIntersect<T>(T1.qr, T2.rp) ||   
                 Is3DSegmIntersect<T>(T1.rp, T2.pq) || Is3DSegmIntersect<T>(T1.rp, T2.qr) || Is3DSegmIntersect<T>(T1.rp, T2.rp));
