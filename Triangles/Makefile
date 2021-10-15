@@ -111,44 +111,44 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named TrINT.exe
+# Target rules for targets named TrianglesIntersect.exe
 
 # Build rule for target.
-TrINT.exe: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 TrINT.exe
-.PHONY : TrINT.exe
+TrianglesIntersect.exe: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 TrianglesIntersect.exe
+.PHONY : TrianglesIntersect.exe
 
 # fast build rule for target.
-TrINT.exe/fast:
-	$(MAKE) -f CMakeFiles/TrINT.exe.dir/build.make CMakeFiles/TrINT.exe.dir/build
-.PHONY : TrINT.exe/fast
+TrianglesIntersect.exe/fast:
+	$(MAKE) -f CMakeFiles/TrianglesIntersect.exe.dir/build.make CMakeFiles/TrianglesIntersect.exe.dir/build
+.PHONY : TrianglesIntersect.exe/fast
 
-TrINT.o: TrINT.cpp.o
+TrianglesIntersect.o: TrianglesIntersect.cpp.o
 
-.PHONY : TrINT.o
+.PHONY : TrianglesIntersect.o
 
 # target to build an object file
-TrINT.cpp.o:
-	$(MAKE) -f CMakeFiles/TrINT.exe.dir/build.make CMakeFiles/TrINT.exe.dir/TrINT.cpp.o
-.PHONY : TrINT.cpp.o
+TrianglesIntersect.cpp.o:
+	$(MAKE) -f CMakeFiles/TrianglesIntersect.exe.dir/build.make CMakeFiles/TrianglesIntersect.exe.dir/TrianglesIntersect.cpp.o
+.PHONY : TrianglesIntersect.cpp.o
 
-TrINT.i: TrINT.cpp.i
+TrianglesIntersect.i: TrianglesIntersect.cpp.i
 
-.PHONY : TrINT.i
+.PHONY : TrianglesIntersect.i
 
 # target to preprocess a source file
-TrINT.cpp.i:
-	$(MAKE) -f CMakeFiles/TrINT.exe.dir/build.make CMakeFiles/TrINT.exe.dir/TrINT.cpp.i
-.PHONY : TrINT.cpp.i
+TrianglesIntersect.cpp.i:
+	$(MAKE) -f CMakeFiles/TrianglesIntersect.exe.dir/build.make CMakeFiles/TrianglesIntersect.exe.dir/TrianglesIntersect.cpp.i
+.PHONY : TrianglesIntersect.cpp.i
 
-TrINT.s: TrINT.cpp.s
+TrianglesIntersect.s: TrianglesIntersect.cpp.s
 
-.PHONY : TrINT.s
+.PHONY : TrianglesIntersect.s
 
 # target to generate assembly for a file
-TrINT.cpp.s:
-	$(MAKE) -f CMakeFiles/TrINT.exe.dir/build.make CMakeFiles/TrINT.exe.dir/TrINT.cpp.s
-.PHONY : TrINT.cpp.s
+TrianglesIntersect.cpp.s:
+	$(MAKE) -f CMakeFiles/TrianglesIntersect.exe.dir/build.make CMakeFiles/TrianglesIntersect.exe.dir/TrianglesIntersect.cpp.s
+.PHONY : TrianglesIntersect.cpp.s
 
 # Help Target
 help:
@@ -158,10 +158,10 @@ help:
 	@echo "... depend"
 	@echo "... rebuild_cache"
 	@echo "... edit_cache"
-	@echo "... TrINT.exe"
-	@echo "... TrINT.o"
-	@echo "... TrINT.i"
-	@echo "... TrINT.s"
+	@echo "... TrianglesIntersect.exe"
+	@echo "... TrianglesIntersect.o"
+	@echo "... TrianglesIntersect.i"
+	@echo "... TrianglesIntersect.s"
 .PHONY : help
 
 
