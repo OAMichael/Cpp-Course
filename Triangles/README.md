@@ -10,10 +10,9 @@ Folder TESTS contains Unit tests and End-to-end time tests. End-to-end folder co
 
 ## How to build
 
-Go to folder Triangles
+Go to folder Triangles. Then:
 
 `cmake .`
-
 `make`
 
 
