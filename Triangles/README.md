@@ -2,7 +2,7 @@
 
 This is project Triangles.
 
-Main file is TrINT.cpp
+Main file is TrianglesIntersect.cpp
 And header is Geometry.hpp
 
 
