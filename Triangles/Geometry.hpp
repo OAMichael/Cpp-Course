@@ -4,21 +4,21 @@ namespace Geom {
     const T NaN = std::numeric_limits<T>::quiet_NaN();
 
     template <typename T>
-    class Point
+    struct Point
     {
-    public:
-        T x;
-        T y;
-        T z;
+        T x = NaN<T>;
+        T y = NaN<T>;
+        T z = NaN<T>;
 
         void Read()
         {
             std::cin >> x >> y >> z;
         }
 
-        Point(T px = NaN<T>,
-              T py = NaN<T>,
-              T pz = NaN<T>)
+        Point()
+        {}
+
+        Point(T px, T py, T pz)
         {   
             x = px;
             y = py;
@@ -28,9 +28,8 @@ namespace Geom {
 
 
     template <typename T>
-    class Segment 
+    struct Segment 
     {
-    public:
         Point<T> m;
         Point<T> n;
 
@@ -41,6 +40,9 @@ namespace Geom {
             return;
         }
 
+        Segment()
+        {}
+
         Segment(Point<T>& a, Point<T>& b) { m.x = a.x; m.y = a.y; m.z = a.z; 
                                       n.x = b.x; n.y = b.y; n.z = b.z;}
 
@@ -50,21 +52,20 @@ namespace Geom {
 
 
     template <typename T>
-    class Vector
+    struct Vector
     {
-    public:
-        T x;
-        T y;
-        T z;
+        T x = NaN<T>;
+        T y = NaN<T>;
+        T z = NaN<T>;
 
-        Vector(T vx = NaN<T>, T vy = NaN<T>, T vz = NaN<T>)
+        Vector(T vx, T vy, T vz)
         {
             x = vx;
             y = vy;
             z = vz;
         }
 
-        double GetLenght()
+        const double GetLenght()
         {
             return sqrt(x * x + y * y + z * z);
         }
@@ -140,12 +141,11 @@ namespace Geom {
 
 
     template <typename T>
-    class Triangle
-    {
-    public: 
-        Point<T> p;
-        Point<T> q;
-        Point<T> r;
+    struct Triangle
+    { 
+        Point<T> p{NaN<T>, NaN<T>, NaN<T>};
+        Point<T> q{NaN<T>, NaN<T>, NaN<T>};
+        Point<T> r{NaN<T>, NaN<T>, NaN<T>};
         
         Segment<T> pq = {p, q};
         Segment<T> qr = {q, r};
@@ -182,7 +182,10 @@ namespace Geom {
             return ((p - q).GetLenght() + (q-r).GetLenght() + (r - p).GetLenght());
         }
 
-        Triangle(Point<T> A = {NaN<T>, NaN<T>, NaN<T>}, Point<T> B = {NaN<T>, NaN<T>, NaN<T>}, Point<T> C = {NaN<T>, NaN<T>, NaN<T>})
+        Triangle()
+        {}
+
+        Triangle(Point<T> A, Point<T> B, Point<T> C)
         {
             p.x = A.x;
             p.y = A.y;
@@ -260,8 +263,20 @@ namespace Geom {
             T   T1p2 = Determ<T>(T1.p, T1.q, T1.r, T2.p), 
                 T1q2 = Determ<T>(T1.p, T1.q, T1.r, T2.q),
                 T1r2 = Determ<T>(T1.p, T1.q, T1.r, T2.r); 
+
+
+            // if one of the points of T2 lies in T1's plane
+            if(T1p2 == 0 && IsPointInTriangle<T>(T1, T2.p))
+                return true;
+
+            if(T1q2 == 0 && IsPointInTriangle<T>(T1, T2.q))
+                return true;
+
+            if(T1r2 == 0 && IsPointInTriangle<T>(T1, T2.r))
+                return true;
+        
             
-            //if all three points of T2 lie in the same open halfspace induced by T1
+            // if all three points of T2 lie in the same open halfspace induced by T1
             if (T1p2 * T1q2 > 0 && T1p2 * T1r2 > 0 && T1q2 * T1r2 > 0)
                 return false;
 
@@ -270,11 +285,24 @@ namespace Geom {
                 T2q1 = Determ<T>(T2.p, T2.q, T2.r, T1.q), 
                 T2r1 = Determ<T>(T2.p, T2.q, T2.r, T1.r);
 
-            //if all three points of T1 lie in the same open halfspace induced by T2
+
+            // if one of the points of T1 lies in T2's plane
+            if(T2p1 == 0 && IsPointInTriangle<T>(T2, T1.p))
+                return true;
+
+            if(T2q1 == 0 && IsPointInTriangle<T>(T2, T1.q))
+                return true;
+
+            if(T2r1 == 0 && IsPointInTriangle<T>(T2, T1.r))
+                return true;
+
+            
+
+            // if all three points of T1 lie in the same open halfspace induced by T2
             if (T2p1 * T2q1 > 0 && T2p1 * T2r1 > 0 && T2q1 * T2r1 > 0)
                 return false;
 
-            //if both triangles lie in same plane
+            // if both triangles lie in same plane
             if(T1p2 == 0 && T1q2 == 0 && T1r2 == 0)
                 return Is2DIntersect<T>(T1, T2);
 
@@ -293,7 +321,7 @@ namespace Geom {
             if(T2r1 == 0 && T2q1 == 0 && T2p1 != 0)
                 return (Is2DSegmIntersect<T>(T1.qr, T2.pq) || Is2DSegmIntersect<T>(T1.qr, T2.qr) || Is2DSegmIntersect<T>(T1.qr, T2.rp));
             
-            // if 1 or no vertex lie in other triangle's plane
+            // if no vertex lie in other triangle's plane
 
             // making point p one with determinant sign (or zero) different from others
             while(Determ<T>(T2.p, T2.q, T2.r, T1.p) * Determ<T>(T2.p, T2.q, T2.r, T1.q) > 0 || 

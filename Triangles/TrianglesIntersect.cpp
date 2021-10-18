@@ -32,6 +32,17 @@ int main()
 				}
 	}  
 
+	i = 0;
+	while(TrSet[N-1].IntersectIndex == 0)
+	{
+			if(IsIntersect(TrSet[N-1], TrSet[i]))
+			{	
+				TrSet[i].IntersectIndex = 1;
+				TrSet[N-1].IntersectIndex = 1;
+			}
+			i++;
+	}
+	
 //	std::cout << "#Tr Valid/Intsct" << std::endl;
 	for (i = 0; i < N; i++){
 
