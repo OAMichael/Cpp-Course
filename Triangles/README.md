@@ -2,8 +2,7 @@
 
 This is project Triangles.
 
-Main file is TrianglesIntersect.cpp
-And header is Geometry.hpp
+Main file is TrianglesIntersect.cpp which is located in Source folder.
 
 
 Folder TESTS contains Unit tests and End-to-end time tests. End-to-end folder contains files with different amount of triangles. It also contains PCreate program which made for creating time tests.
@@ -12,9 +11,9 @@ Folder TESTS contains Unit tests and End-to-end time tests. End-to-end folder co
 
 Go to folder Triangles. Then:
 
-`cmake .`
+`cmake .
 
-`make`
+make`
 
 
 
