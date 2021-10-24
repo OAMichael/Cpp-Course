@@ -739,8 +739,6 @@ namespace Geom {
 
                 InsertTriangle(*Oct.SubOctants[Corner - 1], Tr);
 
-                return 0;
-
             }
             
             Oct.OctantTriangles.push_back(Tr);
