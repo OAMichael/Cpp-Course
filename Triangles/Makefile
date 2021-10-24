@@ -111,44 +111,44 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named TrianglesIntersect.exe
+# Target rules for targets named Source/TrianglesIntersection.exe
 
 # Build rule for target.
-TrianglesIntersect.exe: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 TrianglesIntersect.exe
-.PHONY : TrianglesIntersect.exe
+Source/TrianglesIntersection.exe: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 Source/TrianglesIntersection.exe
+.PHONY : Source/TrianglesIntersection.exe
 
 # fast build rule for target.
-TrianglesIntersect.exe/fast:
-	$(MAKE) -f CMakeFiles/TrianglesIntersect.exe.dir/build.make CMakeFiles/TrianglesIntersect.exe.dir/build
-.PHONY : TrianglesIntersect.exe/fast
+Source/TrianglesIntersection.exe/fast:
+	$(MAKE) -f CMakeFiles/Source/TrianglesIntersection.exe.dir/build.make CMakeFiles/Source/TrianglesIntersection.exe.dir/build
+.PHONY : Source/TrianglesIntersection.exe/fast
 
-TrianglesIntersect.o: TrianglesIntersect.cpp.o
+Source/TrianglesIntersection.o: Source/TrianglesIntersection.cpp.o
 
-.PHONY : TrianglesIntersect.o
+.PHONY : Source/TrianglesIntersection.o
 
 # target to build an object file
-TrianglesIntersect.cpp.o:
-	$(MAKE) -f CMakeFiles/TrianglesIntersect.exe.dir/build.make CMakeFiles/TrianglesIntersect.exe.dir/TrianglesIntersect.cpp.o
-.PHONY : TrianglesIntersect.cpp.o
+Source/TrianglesIntersection.cpp.o:
+	$(MAKE) -f CMakeFiles/Source/TrianglesIntersection.exe.dir/build.make CMakeFiles/Source/TrianglesIntersection.exe.dir/Source/TrianglesIntersection.cpp.o
+.PHONY : Source/TrianglesIntersection.cpp.o
 
-TrianglesIntersect.i: TrianglesIntersect.cpp.i
+Source/TrianglesIntersection.i: Source/TrianglesIntersection.cpp.i
 
-.PHONY : TrianglesIntersect.i
+.PHONY : Source/TrianglesIntersection.i
 
 # target to preprocess a source file
-TrianglesIntersect.cpp.i:
-	$(MAKE) -f CMakeFiles/TrianglesIntersect.exe.dir/build.make CMakeFiles/TrianglesIntersect.exe.dir/TrianglesIntersect.cpp.i
-.PHONY : TrianglesIntersect.cpp.i
+Source/TrianglesIntersection.cpp.i:
+	$(MAKE) -f CMakeFiles/Source/TrianglesIntersection.exe.dir/build.make CMakeFiles/Source/TrianglesIntersection.exe.dir/Source/TrianglesIntersection.cpp.i
+.PHONY : Source/TrianglesIntersection.cpp.i
 
-TrianglesIntersect.s: TrianglesIntersect.cpp.s
+Source/TrianglesIntersection.s: Source/TrianglesIntersection.cpp.s
 
-.PHONY : TrianglesIntersect.s
+.PHONY : Source/TrianglesIntersection.s
 
 # target to generate assembly for a file
-TrianglesIntersect.cpp.s:
-	$(MAKE) -f CMakeFiles/TrianglesIntersect.exe.dir/build.make CMakeFiles/TrianglesIntersect.exe.dir/TrianglesIntersect.cpp.s
-.PHONY : TrianglesIntersect.cpp.s
+Source/TrianglesIntersection.cpp.s:
+	$(MAKE) -f CMakeFiles/Source/TrianglesIntersection.exe.dir/build.make CMakeFiles/Source/TrianglesIntersection.exe.dir/Source/TrianglesIntersection.cpp.s
+.PHONY : Source/TrianglesIntersection.cpp.s
 
 # Help Target
 help:
@@ -158,10 +158,10 @@ help:
 	@echo "... depend"
 	@echo "... rebuild_cache"
 	@echo "... edit_cache"
-	@echo "... TrianglesIntersect.exe"
-	@echo "... TrianglesIntersect.o"
-	@echo "... TrianglesIntersect.i"
-	@echo "... TrianglesIntersect.s"
+	@echo "... Source/TrianglesIntersection.exe"
+	@echo "... Source/TrianglesIntersection.o"
+	@echo "... Source/TrianglesIntersection.i"
+	@echo "... Source/TrianglesIntersection.s"
 .PHONY : help
 
 

@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.8)
 
-add_executable(TrianglesIntersect.exe TrianglesIntersect.cpp)
+add_executable(Source/TrianglesIntersection.exe Source/TrianglesIntersection.cpp)
 
 add_compile_options(
     -Werror

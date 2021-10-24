@@ -1,8 +1,10 @@
 #include <iostream>
 #include <cstdlib>
 #include <limits>
+#include <cassert>
+#include <vector>
 #include <cmath>
-#include "../../Geometry.hpp"
+#include "../../Headers/Geometry.hpp"
 
 
 int main()

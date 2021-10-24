@@ -1,19 +1,14 @@
 #include <iostream>
 #include <cstdlib>
-//#include <ctime>
 
 int main()
 {
     long long N = 0;
     std::cin >> N;
 
-    int edge = 1000;
+    int edge = 32000;
 
     std::cout << N << std::endl;
-
-    //time_t t = time(NULL);
-
-    //srand(t);
 
     for(long long i = 0; i < N; i++)
     {
