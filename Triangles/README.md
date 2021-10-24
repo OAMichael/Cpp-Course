@@ -12,6 +12,7 @@ Folder TESTS contains Unit tests and End-to-end time tests. End-to-end folder co
 Go to folder Triangles. Then:
 
 `cmake .`
+
 `make`
 
 
