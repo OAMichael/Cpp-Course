@@ -179,7 +179,7 @@ namespace Geom {
 
         const double GetPerimeter()
         {
-            return ((p - q).GetLenght() + (q-r).GetLenght() + (r - p).GetLenght());
+            return ((p - q).GetLenght() + (q - r).GetLenght() + (r - p).GetLenght());
         }
 
         Triangle()
@@ -741,6 +741,9 @@ namespace Geom {
 
             }
             
+            // specially made to take into account cases when Tr does not fit
+            // in the next octant but it has no intersections with triangles
+            // in its own octant 
             Oct.OctantTriangles.push_back(Tr);
 
             return 0;
