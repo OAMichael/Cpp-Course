@@ -582,6 +582,10 @@ namespace Geom {
     }
 
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//                                  Recursively dividing space into octants                                       //
+
+
     // Dividing whole space into octants which divided into smaller octants 
     // which divided into even smaller octants and so on
     namespace Octants
@@ -739,11 +743,9 @@ namespace Geom {
 
                 InsertTriangle(*Oct.SubOctants[Corner - 1], Tr);
 
+                return 0;
             }
             
-            // specially made to take into account cases when Tr does not fit
-            // in the next octant but it has no intersections with triangles
-            // in its own octant 
             Oct.OctantTriangles.push_back(Tr);
 
             return 0;
@@ -755,16 +757,12 @@ namespace Geom {
         template <typename T>
         void TriangleIntersect(Octants::Octant<T>* OcTree, bool* IntArr)
         {
-            for(int i = 0; i < 8; i++)
-            {
-                if(OcTree->SubOctants[i] != nullptr)
-                    TriangleIntersect(OcTree->SubOctants[i], IntArr);
-            } 
-
+            int i = 0;
+    
             typename std::vector<Triangle<T>>::iterator Iter1;
             typename std::vector<Triangle<T>>::iterator Iter2;
             
-            for(Iter1 = OcTree->OctantTriangles.begin(); Iter1 != (OcTree->OctantTriangles.end())--; ++Iter1)
+            for(Iter1 = OcTree->OctantTriangles.begin(); Iter1 != --(OcTree->OctantTriangles.end()); ++Iter1)
             {
                 for(Iter2 = Iter1 + 1; Iter2 != OcTree->OctantTriangles.end(); ++Iter2)
                     if((IntArr[Iter1->TriangleNumber] != 1 || IntArr[Iter2->TriangleNumber] != 1) && IsIntersect(*Iter1, *Iter2))
@@ -773,6 +771,28 @@ namespace Geom {
                         IntArr[Iter2->TriangleNumber] = 1;
                     }   
             }
+
+
+            // specially made to take into account cases when Tr does not fit
+            // in the next octant but it has no intersections with triangles
+            // in its own octant and has intersections with triangles in
+            // lower nested octants. So Tr is being pushed into all suboctants
+            // and then this function being called for each suboctant recursively
+            for(Iter1 = OcTree->OctantTriangles.begin(); Iter1 != OcTree->OctantTriangles.end(); ++Iter1)
+            {
+                if(IntArr[Iter1->TriangleNumber] == 0)
+                    for(i = 0; i < 8; ++i)
+                        if (OcTree->SubOctants[i] != nullptr)
+                        {
+                            OcTree->SubOctants[i]->OctantTriangles.push_back(*Iter1);
+                        }
+            }
+
+            for(i = 0; i < 8; ++i)
+            {
+                if(OcTree->SubOctants[i] != nullptr)
+                    TriangleIntersect(OcTree->SubOctants[i], IntArr);
+            } 
 
             return;
         }
