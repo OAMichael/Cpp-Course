@@ -622,7 +622,7 @@ namespace Geom {
         // 7) x < 0, y > 0, z < 0
         // 8) x < 0, y < 0, z < 0
         // In which corner of the octant the triangle lies
-        // Returns 0 if triangle does not fit in one of corners
+        // Returns -1 if triangle does not fit in one of the corners
         template <typename T>
         int InWhichCorner(const Triangle<T>& Tr, const Octant<T>& Oct)
         {
