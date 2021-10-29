@@ -5,4 +5,5 @@ TESTS/End-to-end/Test250THSND.txt
 TESTS/End-to-end/Test100THSND.txt
 TESTS/End-to-end/Test.txt
 TrianglesIntersect.cpp
+.gitignore
 
