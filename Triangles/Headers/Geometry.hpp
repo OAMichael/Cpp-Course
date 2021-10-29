@@ -241,7 +241,7 @@ namespace Geom {
 
         Tr.MaxCoordinate = std::max( {std::abs(Tr.p.x), std::abs(Tr.p.y), std::abs(Tr.p.z),
                                       std::abs(Tr.q.x), std::abs(Tr.q.y), std::abs(Tr.q.z),
-                                      std::abs(Tr.r.x), std::abs(Tr.r.y), std::abs(Tr.r.z)});
+                                      std::abs(Tr.r.x), std::abs(Tr.r.y), std::abs(Tr.r.z)} );
         Tr.Validation = Tr.IsValid();
     }
 
@@ -412,8 +412,8 @@ namespace Geom {
     template <typename T>
     const T Determ(const Point<T>& a, const Point<T>& b, const Point<T>& c, const Point<T>& d)
     {
-        return  ((a.x - d.x)*((b.y - d.y)*(c.z - d.z) - (c.y - d.y)*(b.z - d.z))                        //checking if the 4th point lies 
-              -  (a.y - d.y)*((b.x - d.x)*(c.z - d.z) - (c.x - d.x)*(b.z - d.z))                        //in the plane induced by other points
+        return  ((a.x - d.x)*((b.y - d.y)*(c.z - d.z) - (c.y - d.y)*(b.z - d.z))                        //checking if the 4 points lies 
+              -  (a.y - d.y)*((b.x - d.x)*(c.z - d.z) - (c.x - d.x)*(b.z - d.z))                        //in the same plane 
               +  (a.z - d.z)*((b.x - d.x)*(c.y - d.y) - (c.x - d.x)*(b.y - d.y))); 
     }
 
@@ -437,10 +437,11 @@ namespace Geom {
         if(IsParallel(a1, a2))                  //if a1 || a2
         {
             if(IsParallel(a1, a.m - b.m))       //if lines induced by a and b coincide
-            {
-                if((a.m.x != a.n.x && fmin(a.m.x, a.n.x) <= fmax(b.m.x, b.n.x) && fmin(b.m.x, b.n.x) <= fmax(a.m.x, a.n.x)) ||    //segments on line induced
-                   (a.m.y != a.n.y && fmin(a.m.y, a.n.y) <= fmax(b.m.y, b.n.y) && fmin(b.m.y, b.n.y) <= fmax(a.m.y, a.n.y)) ||
-                   (a.m.z != a.n.z && fmin(a.m.z, a.n.z) <= fmax(b.m.z, b.n.z) && fmin(b.m.z, b.n.z) <= fmax(a.m.z, a.n.z)))      //by a and b intersect
+            {   
+                //segments on line induced by a and b intersect
+                if( (a.m.x != a.n.x && fmin(a.m.x, a.n.x) <= fmax(b.m.x, b.n.x) && fmin(b.m.x, b.n.x) <= fmax(a.m.x, a.n.x)) ||
+                    (a.m.y != a.n.y && fmin(a.m.y, a.n.y) <= fmax(b.m.y, b.n.y) && fmin(b.m.y, b.n.y) <= fmax(a.m.y, a.n.y)) ||
+                    (a.m.z != a.n.z && fmin(a.m.z, a.n.z) <= fmax(b.m.z, b.n.z) && fmin(b.m.z, b.n.z) <= fmax(a.m.z, a.n.z)) )
                     return true;
             }
             return false;
@@ -470,7 +471,7 @@ namespace Geom {
     const bool IsParallel(const Vector<T>& a, const Vector<T>& b)
     {   
         Vector<T> tmp = a^b;
-        if ( tmp.x == 0 && tmp.y == 0 && tmp.z == 0 )    //is cross product zero
+        if (tmp.x == 0 && tmp.y == 0 && tmp.z == 0)    //is cross product zero
             return true;
 
         return false;
@@ -519,7 +520,11 @@ namespace Geom {
             if(T1p2 * T1q2 <= 0 || T1p2 * T1r2 <= 0 || T1q2 * T1r2 <= 0)
             {
                 if(T1p2 == 0 || T1q2 == 0 || T1r2 == 0)
-                    return (IsPointInTriangle(T1, T2.p) || IsPointInTriangle(T1, T2.q) || IsPointInTriangle(T1, T2.r));
+                    return (IsPointInTriangle(T1, T2.p) || IsPointInTriangle(T1, T2.q) || IsPointInTriangle(T1, T2.r) ||
+
+                            Is3DSegmIntersect(T1.pq, T2.pq) || Is3DSegmIntersect(T1.pq, T2.qr) || Is3DSegmIntersect(T1.pq, T2.rp) ||
+                            Is3DSegmIntersect(T1.qr, T2.pq) || Is3DSegmIntersect(T1.qr, T2.qr) || Is3DSegmIntersect(T1.qr, T2.rp) ||
+                            Is3DSegmIntersect(T1.rp, T2.pq) || Is3DSegmIntersect(T1.rp, T2.qr) || Is3DSegmIntersect(T1.rp, T2.rp));
 
                 Vector<T> n = (T1.q - T1.p) ^ (T1.r - T1.q);
                 double t = 0;
@@ -547,7 +552,11 @@ namespace Geom {
             if(T2p1 * T2q1 <= 0 || T2p1 * T2r1 <= 0 || T2q1 * T2r1 <= 0)
             {
                 if(T2p1 == 0 || T2q1 == 0 || T2r1 == 0)
-                    return (IsPointInTriangle(T2, T1.p) || IsPointInTriangle(T2, T1.q) || IsPointInTriangle(T2, T1.r));
+                    return (IsPointInTriangle(T2, T1.p) || IsPointInTriangle(T2, T1.q) || IsPointInTriangle(T2, T1.r) ||
+
+                            Is3DSegmIntersect(T2.pq, T1.pq) || Is3DSegmIntersect(T2.pq, T1.qr) || Is3DSegmIntersect(T2.pq, T1.rp) ||
+                            Is3DSegmIntersect(T2.qr, T1.pq) || Is3DSegmIntersect(T2.qr, T1.qr) || Is3DSegmIntersect(T2.qr, T1.rp) ||
+                            Is3DSegmIntersect(T2.rp, T1.pq) || Is3DSegmIntersect(T2.rp, T1.qr) || Is3DSegmIntersect(T2.rp, T1.rp));
 
                 Vector<T> n = (T2.q - T2.p) ^ (T2.r - T2.q);
                 double t = 0;
@@ -677,7 +686,7 @@ namespace Geom {
         {
             int Corner = InWhichCorner(Tr, Oct);
             
-            if(Corner && Oct.OctantTriangles.size() > 2)
+            if(Corner != -1 && Oct.OctantTriangles.size() > 2)
             {
 
                 if(Oct.SubOctants[Corner] == nullptr)
@@ -685,7 +694,7 @@ namespace Geom {
                     Vector<T> Min = Oct.Min;
                     Vector<T> Max = Oct.Max;
                     
-                    if(Corner == 1)
+                    if(Corner == 0)
                     {
                         Oct.SubOctants[Corner] = new Octant<T>;
                         Oct.SubOctants[Corner]->Min = 0.5*(Min + Max);
@@ -693,14 +702,14 @@ namespace Geom {
 
                     }
                     
-                    if(Corner == 2)
+                    if(Corner == 1)
                     {
                         Oct.SubOctants[Corner] = new Octant<T>;
                         Oct.SubOctants[Corner]->Min = {0.5*(Min.x + Max.x),        Min.y,        0.5*(Min.z + Max.z)};
                         Oct.SubOctants[Corner]->Max = {       Max.x,        0.5*(Min.y + Max.y),         Max.z};     
                     }
                     
-                    if(Corner == 3)
+                    if(Corner == 2)
                     {
                         Oct.SubOctants[Corner] = new Octant<T>;
                         Oct.SubOctants[Corner]->Min = {       Min.x,        0.5*(Min.y + Max.y), 0.5*(Min.z + Max.z)}; 
@@ -708,35 +717,35 @@ namespace Geom {
                     }
 
 
-                    if(Corner == 4)
+                    if(Corner == 3)
                     {
                         Oct.SubOctants[Corner] = new Octant<T>;
                         Oct.SubOctants[Corner]->Min = {       Min.x,               Min.y,        0.5*(Min.z + Max.z)};
                         Oct.SubOctants[Corner]->Max = {0.5*(Min.x + Max.x), 0.5*(Min.y + Max.y),          Max.z};    
                     }
 
-                    if(Corner == 5)
+                    if(Corner == 4)
                     {
                         Oct.SubOctants[Corner] = new Octant<T>;
                         Oct.SubOctants[Corner]->Min = {0.5*(Min.x + Max.x), 0.5*(Min.y + Max.y),          Min.z     };
                         Oct.SubOctants[Corner]->Max = {       Max.x,               Max.y,        0.5*(Min.z + Max.z)};
                     }
 
-                    if(Corner == 6)
+                    if(Corner == 5)
                     {
                         Oct.SubOctants[Corner] = new Octant<T>;
                         Oct.SubOctants[Corner]->Min = {0.5*(Min.x + Max.x),        Min.y,                 Min.z     };
                         Oct.SubOctants[Corner]->Max = {       Max.x,        0.5*(Min.y + Max.y), 0.5*(Min.z + Max.z)};
                     }
 
-                    if(Corner == 7)
+                    if(Corner == 6)
                     {
                         Oct.SubOctants[Corner] = new Octant<T>;
                         Oct.SubOctants[Corner]->Min = {       Min.x,        0.5*(Min.y + Max.y),          Min.z     };
                         Oct.SubOctants[Corner]->Max = {0.5*(Min.x + Max.x),        Max.y,        0.5*(Min.z + Max.z)};
                     }
 
-                    if(Corner == 8)
+                    if(Corner == 7)
                     {
                         Oct.SubOctants[Corner] = new Octant<T>;
                         Oct.SubOctants[Corner]->Min = Min;

@@ -37,13 +37,15 @@ int main(int argc, char* argv[])
     }
 
     Geom::Octants::Octant<double> Space{ {-Max, -Max, -Max}, {Max, Max, Max} };
+    
     TrIt = TrSet.begin();
+    std::vector<Geom::Triangle<double>>::iterator TrEnd = TrSet.end();
 
-    while(TrIt != TrSet.end())
+    while(TrIt != TrEnd)
     {
 
         Geom::Octants::InsertTriangle<double>(Space, *TrIt);
-    
+        
         ++TrIt;
     }
 
