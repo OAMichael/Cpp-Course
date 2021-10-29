@@ -1,0 +1,3 @@
+/home/michael/Documents/C/C++/Triangles/Build/CMakeFiles/rebuild_cache.dir
+/home/michael/Documents/C/C++/Triangles/Build/CMakeFiles/edit_cache.dir
+/home/michael/Documents/C/C++/Triangles/Build/CMakeFiles/TrianglesIntersection.exe.dir

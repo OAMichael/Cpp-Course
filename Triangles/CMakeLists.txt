@@ -1,6 +1,12 @@
 cmake_minimum_required(VERSION 2.8)
 
-add_executable(Source/TrianglesIntersection.exe Source/TrianglesIntersection.cpp)
+project (Triangles)  
+
+set(CMAKE_CXX_STANDARD 17)
+set(SOURCE_EXE ${CMAKE_CURRENT_SOURCE_DIR}/Source/TrianglesIntersection.cpp)
+set(SOURCE_LIB ${CMAKE_CURRENT_SOURCE_DIR}/Headers)
+
+add_executable(TrianglesIntersection.exe)
 
 add_compile_options(
     -Werror
@@ -17,3 +23,6 @@ add_compile_options(
     -Wundef    
     -Wreturn-type
 )
+
+target_sources(TrianglesIntersection.exe PRIVATE ${SOURCE_EXE})
+target_include_directories(TrianglesIntersection.exe PRIVATE ${SOURCE_LIB})

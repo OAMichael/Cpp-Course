@@ -1,0 +1,30 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/michael/Documents/C/C++/Triangles/Headers/Geometry.hpp
+
+/home/michael/Documents/C/C++/Triangles/Source/TrianglesIntersection.cpp
+iostream
+-
+cstdlib
+-
+limits
+-
+cmath
+-
+cassert
+-
+vector
+-
+algorithm
+-
+iterator
+-
+../Headers/Geometry.hpp
+/home/michael/Documents/C/C++/Triangles/Headers/Geometry.hpp
+

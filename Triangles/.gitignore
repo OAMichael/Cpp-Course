@@ -1,6 +1,4 @@
-/CMakeFiles
-CMakeCache.txt
-cmake_install.cmake
+./Build
 **.exe
 ./TESTS/End-to-end/Test1MIL.txt
 ./TESTS/End-to-end/Test250THSND.txt

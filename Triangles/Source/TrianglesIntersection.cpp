@@ -51,10 +51,10 @@ int main(int argc, char* argv[])
 
     Geom::TriangleIntersect<double>(&Space, IntersectionArray);
 
-    for(i = 0; i < N; i++)
+    for(i = 0; i < N; ++i)
         if(IntersectionArray[i] == 1)
             std::cout << i << std::endl;
-
+        
     return 0;
 }
 

@@ -83,7 +83,7 @@ namespace Geom {
 
     //dot product
     template <typename T>
-    T operator*(const Vector<T>& a, const Vector<T>& b)
+    const T operator*(const Vector<T>& a, const Vector<T>& b)
     {
         return a.x * b.x + a.y * b.y + a.z * b.z;
     }
@@ -91,7 +91,7 @@ namespace Geom {
 
     //cross product
     template <typename T>
-    Vector<T> operator^(const Vector<T>& a, const Vector<T>& b)              
+    const Vector<T> operator^(const Vector<T>& a, const Vector<T>& b)              
     {
         T x = a.y * b.z - b.y * a.z;
         T y = b.x * a.z - a.x * b.z;
@@ -102,7 +102,7 @@ namespace Geom {
 
     //multiplying by scalar
     template <typename T>
-    Vector<T> operator*(const T& k, const Vector<T>& a)
+    const Vector<T> operator*(const T& k, const Vector<T>& a)
     {
         return Vector<T>(k * a.x, k * a.y, k * a.z);
     }
@@ -110,7 +110,7 @@ namespace Geom {
 
     //adding vectors
     template <typename T>
-    Vector<T> operator+(const Vector<T>& a, const Vector<T>& b)
+    const Vector<T> operator+(const Vector<T>& a, const Vector<T>& b)
     {
         T x = a.x + b.x;
         T y = a.y + b.y;
@@ -121,7 +121,7 @@ namespace Geom {
 
     //subtracting vectors
     template <typename T>
-    Vector<T> operator-(const Vector<T>& a, const Vector<T>& b)
+    const Vector<T> operator-(const Vector<T>& a, const Vector<T>& b)
     {
         T x = a.x - b.x;
         T y = a.y - b.y;
@@ -132,7 +132,7 @@ namespace Geom {
 
     //vector ba made of two points 
     template <typename T>
-    Vector<T> operator-(const Point<T>& a, const Point<T>& b)
+    const Vector<T> operator-(const Point<T>& a, const Point<T>& b)
     {
         T x = a.x - b.x;
         T y = a.y - b.y;
@@ -143,7 +143,7 @@ namespace Geom {
 
     //points comparing operator
     template <typename T>
-    bool operator==(const Point<T>& a, const Point<T>& b)
+    const bool operator==(const Point<T>& a, const Point<T>& b)
     {
         return (a.x == b.x && a.y == b.y && a.z == b.z);
     }
@@ -164,13 +164,14 @@ namespace Geom {
         bool IsValid()
         {
             // if cross product is zero then the triangle is invalid
-            if( ((q - p)^(r - q)).x == 0 &&
-                ((q - p)^(r - q)).y == 0 &&
-                ((q - p)^(r - q)).z == 0)
+            Vector<T> Vec = (q - p)^(r - q);
+            if(Vec.x == 0 && Vec.y == 0 && Vec.z == 0)
                 return false;
 
             return true;
         }
+
+        bool Validation = false;
 
         T MaxCoordinate = NaN<T>;
 
@@ -241,6 +242,7 @@ namespace Geom {
         Tr.MaxCoordinate = std::max( {std::abs(Tr.p.x), std::abs(Tr.p.y), std::abs(Tr.p.z),
                                       std::abs(Tr.q.x), std::abs(Tr.q.y), std::abs(Tr.q.z),
                                       std::abs(Tr.r.x), std::abs(Tr.r.y), std::abs(Tr.r.z)});
+        Tr.Validation = Tr.IsValid();
     }
 
 
@@ -251,10 +253,10 @@ namespace Geom {
     bool Is2DIntersect(const Triangle<T>& T1, const Triangle<T>& T2);
 
     template <typename T>
-    bool IsParallel(const Vector<T>& a, const Vector<T>& b);
+    const bool IsParallel(const Vector<T>& a, const Vector<T>& b);
 
     template <typename T>
-    bool IsParallel(const Segment<T>& a, const Segment<T>& b);
+    const bool IsParallel(const Segment<T>& a, const Segment<T>& b);
 
     template <typename T>
     bool Is2DSegmIntersect(const Segment<T>& a, const Segment<T>& b);
@@ -269,7 +271,7 @@ namespace Geom {
     bool IsNotValidIntersect(const Triangle<T>& T1, const Triangle<T>& T2);
 
     template <typename T>
-    T Determ(const Point<T>& a, const Point<T>& b, const Point<T>& c, const Point<T>& d);
+    const T Determ(const Point<T>& a, const Point<T>& b, const Point<T>& c, const Point<T>& d);
 
 
 
@@ -282,116 +284,125 @@ namespace Geom {
     bool IsIntersect(Triangle<T>& T1, Triangle<T>& T2)
     {
 
-        if(T1.IsValid() && T2.IsValid())
+        if(T1.Validation && T2.Validation)
         {
-            T   T1p2 = Determ<T>(T1.p, T1.q, T1.r, T2.p), 
-                T1q2 = Determ<T>(T1.p, T1.q, T1.r, T2.q),
-                T1r2 = Determ<T>(T1.p, T1.q, T1.r, T2.r); 
+            T   T1p2 = Determ(T1.p, T1.q, T1.r, T2.p), 
+                T1q2 = Determ(T1.p, T1.q, T1.r, T2.q),
+                T1r2 = Determ(T1.p, T1.q, T1.r, T2.r); 
 
-
-            // if one of the points of T2 lies in T1's plane
-            if(T1p2 == 0 && IsPointInTriangle<T>(T1, T2.p))
-                return true;
-
-            if(T1q2 == 0 && IsPointInTriangle<T>(T1, T2.q))
-                return true;
-
-            if(T1r2 == 0 && IsPointInTriangle<T>(T1, T2.r))
-                return true;
-        
             
             // if all three points of T2 lie in the same open halfspace induced by T1
             if (T1p2 * T1q2 > 0 && T1p2 * T1r2 > 0 && T1q2 * T1r2 > 0)
                 return false;
 
 
-            T   T2p1 = Determ<T>(T2.p, T2.q, T2.r, T1.p),
-                T2q1 = Determ<T>(T2.p, T2.q, T2.r, T1.q), 
-                T2r1 = Determ<T>(T2.p, T2.q, T2.r, T1.r);
-
-
-            // if one of the points of T1 lies in T2's plane
-            if(T2p1 == 0 && IsPointInTriangle<T>(T2, T1.p))
-                return true;
-
-            if(T2q1 == 0 && IsPointInTriangle<T>(T2, T1.q))
-                return true;
-
-            if(T2r1 == 0 && IsPointInTriangle<T>(T2, T1.r))
-                return true;
+            T   T2p1 = Determ(T2.p, T2.q, T2.r, T1.p),
+                T2q1 = Determ(T2.p, T2.q, T2.r, T1.q), 
+                T2r1 = Determ(T2.p, T2.q, T2.r, T1.r);
 
             
-
             // if all three points of T1 lie in the same open halfspace induced by T2
             if (T2p1 * T2q1 > 0 && T2p1 * T2r1 > 0 && T2q1 * T2r1 > 0)
                 return false;
 
+
             // if both triangles lie in same plane
             if(T1p2 == 0 && T1q2 == 0 && T1r2 == 0)
-                return Is2DIntersect<T>(T1, T2);
+                return Is2DIntersect(T1, T2);
+
 
             // if 2 of vertices lie in other triangle's plane
-            if(T1p2 == 0 && T1q2 == 0 && T1r2 != 0)
-                return (Is2DSegmIntersect<T>(T2.pq, T1.pq) || Is2DSegmIntersect<T>(T2.pq, T1.qr) || Is2DSegmIntersect<T>(T2.pq, T1.rp));
-            if(T1p2 == 0 && T1r2 == 0 && T1q2 != 0)
-                return (Is2DSegmIntersect<T>(T2.rp, T1.pq) || Is2DSegmIntersect<T>(T2.rp, T1.qr) || Is2DSegmIntersect<T>(T2.rp, T1.rp));
-            if(T1r2 == 0 && T1q2 == 0 && T1p2 != 0)
-                return (Is2DSegmIntersect<T>(T2.qr, T1.pq) || Is2DSegmIntersect<T>(T2.qr, T1.qr) || Is2DSegmIntersect<T>(T2.qr, T1.rp));
+            if(T1p2 == 0 && T1q2 == 0)
+                return (Is2DSegmIntersect(T2.pq, T1.pq) || Is2DSegmIntersect(T2.pq, T1.qr) || Is2DSegmIntersect(T2.pq, T1.rp));
+            if(T1p2 == 0 && T1r2 == 0)
+                return (Is2DSegmIntersect(T2.rp, T1.pq) || Is2DSegmIntersect(T2.rp, T1.qr) || Is2DSegmIntersect(T2.rp, T1.rp));
+            if(T1r2 == 0 && T1q2 == 0)
+                return (Is2DSegmIntersect(T2.qr, T1.pq) || Is2DSegmIntersect(T2.qr, T1.qr) || Is2DSegmIntersect(T2.qr, T1.rp));
             
-            if(T2p1 == 0 && T2q1 == 0 && T2r1 != 0)
-                return (Is2DSegmIntersect<T>(T1.pq, T2.pq) || Is2DSegmIntersect<T>(T1.pq, T2.qr) || Is2DSegmIntersect<T>(T1.pq, T2.rp));
-            if(T2p1 == 0 && T2r1 == 0 && T2q1 != 0)
-                return (Is2DSegmIntersect<T>(T1.rp, T2.pq) || Is2DSegmIntersect<T>(T1.rp, T2.qr) || Is2DSegmIntersect<T>(T1.rp, T2.rp));
-            if(T2r1 == 0 && T2q1 == 0 && T2p1 != 0)
-                return (Is2DSegmIntersect<T>(T1.qr, T2.pq) || Is2DSegmIntersect<T>(T1.qr, T2.qr) || Is2DSegmIntersect<T>(T1.qr, T2.rp));
+            if(T2p1 == 0 && T2q1 == 0)
+                return (Is2DSegmIntersect(T1.pq, T2.pq) || Is2DSegmIntersect(T1.pq, T2.qr) || Is2DSegmIntersect(T1.pq, T2.rp));
+            if(T2p1 == 0 && T2r1 == 0)
+                return (Is2DSegmIntersect(T1.rp, T2.pq) || Is2DSegmIntersect(T1.rp, T2.qr) || Is2DSegmIntersect(T1.rp, T2.rp));
+            if(T2r1 == 0 && T2q1 == 0)
+                return (Is2DSegmIntersect(T1.qr, T2.pq) || Is2DSegmIntersect(T1.qr, T2.qr) || Is2DSegmIntersect(T1.qr, T2.rp));
             
+
+            // if one of the points of T2 lies in T1's plane
+            if(T1p2 == 0)
+                return IsPointInTriangle(T1, T2.p);
+
+            if(T1q2 == 0)
+                return IsPointInTriangle(T1, T2.q);
+
+            if(T1r2 == 0)
+                return IsPointInTriangle(T1, T2.r);
+
+
+            // if one of the points of T1 lies in T2's plane
+            if(T2p1 == 0)
+                return IsPointInTriangle(T2, T1.p);
+
+            if(T2q1 == 0)
+                return IsPointInTriangle(T2, T1.q);
+
+            if(T2r1 == 0)
+                return IsPointInTriangle(T2, T1.r);
+
 
             // if no vertex lie in other triangle's plane
 
 
             // making point p one with determinant sign different from others
-            while(Determ<T>(T2.p, T2.q, T2.r, T1.p) * Determ<T>(T2.p, T2.q, T2.r, T1.q) > 0 || 
-                  Determ<T>(T2.p, T2.q, T2.r, T1.p) * Determ<T>(T2.p, T2.q, T2.r, T1.r) > 0)
+            while(T2r1 * T2q1 < 0)
             {
-                SwapPoints<T>(T1.p, T1.q);                                                                 
-                SwapPoints<T>(T1.q, T1.r);
+                SwapPoints(T1.p, T1.q);                                                                 
+                SwapPoints(T1.q, T1.r);
+
+                T2q1 = Determ(T2.p, T2.q, T2.r, T1.q);
+                T2r1 = Determ(T2.p, T2.q, T2.r, T1.r);
             }
 
             // same
-            while(Determ<T>(T1.p, T1.q, T1.r, T2.p) * Determ<T>(T1.p, T1.q, T1.r, T2.q) > 0 ||
-                  Determ<T>(T1.p, T1.q, T1.r, T2.p) * Determ<T>(T1.p, T1.q, T1.r, T2.r) > 0)
+            while(T1r2 * T1q2 < 0)
             {
-                SwapPoints<T>(T2.p, T2.q);
-                SwapPoints<T>(T2.q, T2.r);
+                SwapPoints(T2.p, T2.q);
+                SwapPoints(T2.q, T2.r);
+
+                T1q2 = Determ(T1.p, T1.q, T1.r, T2.q);
+                T1r2 = Determ(T1.p, T1.q, T1.r, T2.r);
             }
 
+
             // swapping point q and r for triangles to be oriented counter-clockwise 
-            if(Determ<T>(T2.p, T2.q, T2.r, T1.p) < 0)
-                SwapPoints<T>(T2.q, T2.r);
-            if(Determ<T>(T1.p, T1.q, T1.r, T2.p) < 0)
-                SwapPoints<T>(T1.q, T1.r);
+            if(Determ(T2.p, T2.q, T2.r, T1.p) < 0)
+                SwapPoints(T2.q, T2.r);
+            if(Determ(T1.p, T1.q, T1.r, T2.p) < 0)
+                SwapPoints(T1.q, T1.r);
 
 
-            if(Determ<T>(T1.p, T1.q, T2.p, T2.q) <= 0 && Determ<T>(T1.p, T1.r, T2.r, T2.p) <= 0) 
-                return true;
+            if(Determ(T1.p, T1.q, T2.p, T2.q) > 0) 
+                return false;
 
-            return false;
+            if(Determ(T1.p, T1.r, T2.r, T2.p) > 0)
+                return false;
+
+            return true;
         }
         else
-            return IsNotValidIntersect<T>(T1, T2);    // case when one or both triangles not valid
+            return IsNotValidIntersect(T1, T2);    // case when one or both triangles happened to be not valid
     }
 
 
     template <typename T>
     bool Is2DIntersect(Triangle<T>& T1, Triangle<T>& T2)
     {
-        if(IsPointInTriangle<T>(T1, T2.p) || IsPointInTriangle<T>(T1, T2.q) || IsPointInTriangle<T>(T1, T2.r) ||               //checking if point of
-           IsPointInTriangle<T>(T2, T1.p) || IsPointInTriangle<T>(T2, T1.q) || IsPointInTriangle<T>(T2, T1.r) ||               //one triangle lies in 
-                                                                                                                               //other
+        if(IsPointInTriangle(T1, T2.p) || IsPointInTriangle(T1, T2.q) || IsPointInTriangle(T1, T2.r) ||                 //checking if point of
+           IsPointInTriangle(T2, T1.p) || IsPointInTriangle(T2, T1.q) || IsPointInTriangle(T2, T1.r) ||                 //one triangle lies in 
+                                                                                                                        //other
 
-           Is2DSegmIntersect<T>(T1.pq, T2.pq) || Is2DSegmIntersect<T>(T1.pq, T2.qr) || Is2DSegmIntersect<T>(T1.pq, T2.rp) ||   //checking if one of 
-           Is2DSegmIntersect<T>(T1.qr, T2.pq) || Is2DSegmIntersect<T>(T1.qr, T2.qr) || Is2DSegmIntersect<T>(T1.qr, T2.rp) ||   //sides of triangle
-           Is2DSegmIntersect<T>(T1.rp, T2.pq) || Is2DSegmIntersect<T>(T1.rp, T2.qr) || Is2DSegmIntersect<T>(T1.rp, T2.rp))     //crosses edge of another
+           Is2DSegmIntersect(T1.pq, T2.pq) || Is2DSegmIntersect(T1.pq, T2.qr) || Is2DSegmIntersect(T1.pq, T2.rp) ||     //checking if one of 
+           Is2DSegmIntersect(T1.qr, T2.pq) || Is2DSegmIntersect(T1.qr, T2.qr) || Is2DSegmIntersect(T1.qr, T2.rp) ||     //sides of triangle
+           Is2DSegmIntersect(T1.rp, T2.pq) || Is2DSegmIntersect(T1.rp, T2.qr) || Is2DSegmIntersect(T1.rp, T2.rp))       //crosses edge of another
         return true;
 
         return false;
@@ -399,7 +410,7 @@ namespace Geom {
 
 
     template <typename T>
-    T Determ(const Point<T>& a, const Point<T>& b, const Point<T>& c, const Point<T>& d)
+    const T Determ(const Point<T>& a, const Point<T>& b, const Point<T>& c, const Point<T>& d)
     {
         return  ((a.x - d.x)*((b.y - d.y)*(c.z - d.z) - (c.y - d.y)*(b.z - d.z))                        //checking if the 4th point lies 
               -  (a.y - d.y)*((b.x - d.x)*(c.z - d.z) - (c.x - d.x)*(b.z - d.z))                        //in the plane induced by other points
@@ -410,31 +421,22 @@ namespace Geom {
     template <typename T>
     void SwapPoints(Point<T>& a, Point<T>& b)                                                           //swapping two points
     {
-        Point<T> tmp = {0, 0, 0};
-        tmp.x = a.x;
-        tmp.y = a.y;
-        tmp.z = a.z;
-
-        a.x = b.x;
-        a.y = b.y;
-        a.z = b.z;
-
-        b.x = tmp.x;
-        b.y = tmp.y;
-        b.z = tmp.z;
+        Point<T> tmp = a;
+        a = b;
+        b = tmp;
     }
 
 
     template <typename T>
     bool Is2DSegmIntersect(const Segment<T>& a, const Segment<T>& b)
     {
-        Vector<T> a1 = a.m - a.n;              //directing vectors
+        Vector<T> a1 = a.m - a.n;               //directing vectors
         Vector<T> a2 = b.m - b.n;
 
         //checking if a1 || a2
-        if(IsParallel<T>(a1, a2))              //if a1 || a2
+        if(IsParallel(a1, a2))                  //if a1 || a2
         {
-            if(IsParallel<T>(a1, a.m - b.m))   //if lines induced by a and b coincide
+            if(IsParallel(a1, a.m - b.m))       //if lines induced by a and b coincide
             {
                 if((a.m.x != a.n.x && fmin(a.m.x, a.n.x) <= fmax(b.m.x, b.n.x) && fmin(b.m.x, b.n.x) <= fmax(a.m.x, a.n.x)) ||    //segments on line induced
                    (a.m.y != a.n.y && fmin(a.m.y, a.n.y) <= fmax(b.m.y, b.n.y) && fmin(b.m.y, b.n.y) <= fmax(a.m.y, a.n.y)) ||
@@ -465,9 +467,10 @@ namespace Geom {
 
 
     template <typename T>
-    bool IsParallel(const Vector<T>& a, const Vector<T>& b)
+    const bool IsParallel(const Vector<T>& a, const Vector<T>& b)
     {   
-        if ( (a^b).x== 0 && (a^b).y == 0 && (a^b).z == 0 )    //is cross product zero
+        Vector<T> tmp = a^b;
+        if ( tmp.x == 0 && tmp.y == 0 && tmp.z == 0 )    //is cross product zero
             return true;
 
         return false;
@@ -475,9 +478,9 @@ namespace Geom {
 
 
     template <typename T>
-    bool IsParallel(const Segment<T>& a, const Segment<T>& b)
+    const bool IsParallel(const Segment<T>& a, const Segment<T>& b)
     {   
-        return IsParallel<T>(a.m - a.n, b.m - b.n);
+        return IsParallel(a.m - a.n, b.m - b.n);
     }
 
 
@@ -506,12 +509,12 @@ namespace Geom {
     bool IsNotValidIntersect(Triangle<T>& T1, Triangle<T>& T2)
     {
         // if T2 is not valid
-        if(T1.IsValid() && !T2.IsValid())
+        if(T1.Validation && !T2.Validation)
         {
 
-            T   T1p2 = Determ<T>(T1.p, T1.q, T1.r, T2.p), 
-                T1q2 = Determ<T>(T1.p, T1.q, T1.r, T2.q),
-                T1r2 = Determ<T>(T1.p, T1.q, T1.r, T2.r);
+            T   T1p2 = Determ(T1.p, T1.q, T1.r, T2.p), 
+                T1q2 = Determ(T1.p, T1.q, T1.r, T2.q),
+                T1r2 = Determ(T1.p, T1.q, T1.r, T2.r);
 
             if(T1p2 * T1q2 <= 0 || T1p2 * T1r2 <= 0 || T1q2 * T1r2 <= 0)
             {
@@ -527,19 +530,19 @@ namespace Geom {
                 // point of intersection of T1's plane and T2-line
                 Point<T> O{T2.p.x + t * (T2.p.x - T2.q.x), T2.p.y + t * (T2.p.y - T2.q.y), T2.p.z + t * (T2.p.z - T2.q.z)};
 
-                return IsPointInTriangle<T>(T1, O);
+                return IsPointInTriangle(T1, O);
             }
 
             return false;
         }
 
         // if T1 is not valid
-        if(T2.IsValid() && !T1.IsValid())
+        if(T2.Validation && !T1.Validation)
         {
 
-            T   T2p1 = Determ<T>(T2.p, T2.q, T2.r, T1.p),
-                T2q1 = Determ<T>(T2.p, T2.q, T2.r, T1.q), 
-                T2r1 = Determ<T>(T2.p, T2.q, T2.r, T1.r);
+            T   T2p1 = Determ(T2.p, T2.q, T2.r, T1.p),
+                T2q1 = Determ(T2.p, T2.q, T2.r, T1.q), 
+                T2r1 = Determ(T2.p, T2.q, T2.r, T1.r);
 
             if(T2p1 * T2q1 <= 0 || T2p1 * T2r1 <= 0 || T2q1 * T2r1 <= 0)
             {
@@ -555,7 +558,7 @@ namespace Geom {
                 // point of intersection of T2's plane and T1-line
                 Point<T> O{T1.p.x + t * (T1.p.x - T1.q.x), T1.p.y + t * (T1.p.y - T1.q.y), T1.p.z + t * (T1.p.z - T1.q.z)};
 
-                return IsPointInTriangle<T>(T2, O);
+                return IsPointInTriangle(T2, O);
             }
 
             return false;
@@ -565,9 +568,9 @@ namespace Geom {
         if((T1.p == T1.q) && (T1.p == T1.r) && (T2.p == T2.q) && (T2.p == T2.r))
             return (T1.p == T2.p);
 
-        return (Is3DSegmIntersect<T>(T1.pq, T2.pq) || Is3DSegmIntersect<T>(T1.pq, T2.qr) || Is3DSegmIntersect<T>(T1.pq, T2.rp) || 
-                Is3DSegmIntersect<T>(T1.qr, T2.pq) || Is3DSegmIntersect<T>(T1.qr, T2.qr) || Is3DSegmIntersect<T>(T1.qr, T2.rp) ||   
-                Is3DSegmIntersect<T>(T1.rp, T2.pq) || Is3DSegmIntersect<T>(T1.rp, T2.qr) || Is3DSegmIntersect<T>(T1.rp, T2.rp));
+        return (Is3DSegmIntersect(T1.pq, T2.pq) || Is3DSegmIntersect(T1.pq, T2.qr) || Is3DSegmIntersect(T1.pq, T2.rp) || 
+                Is3DSegmIntersect(T1.qr, T2.pq) || Is3DSegmIntersect(T1.qr, T2.qr) || Is3DSegmIntersect(T1.qr, T2.rp) ||   
+                Is3DSegmIntersect(T1.rp, T2.pq) || Is3DSegmIntersect(T1.rp, T2.qr) || Is3DSegmIntersect(T1.rp, T2.rp));
     }
 
 
@@ -576,7 +579,7 @@ namespace Geom {
     bool Is3DSegmIntersect(const Segment<T>& a, const Segment<T>& b)
     {
         if((a.m - b.m) * ((a.m - a.n)^(b.m - b.n)) == 0)
-            return Is2DSegmIntersect<T>(a, b);
+            return Is2DSegmIntersect(a, b);
 
         return false;
     }
@@ -628,120 +631,120 @@ namespace Geom {
             if (Tr.p.x >= MidPoint.x && Tr.p.y >= MidPoint.y && Tr.p.z >= MidPoint.z &&
                 Tr.q.x >= MidPoint.x && Tr.q.y >= MidPoint.y && Tr.q.z >= MidPoint.z &&
                 Tr.r.x >= MidPoint.x && Tr.r.y >= MidPoint.y && Tr.r.z >= MidPoint.z)
-                return 1;
+                return 0;
 
             if (Tr.p.x > MidPoint.x && Tr.p.y < MidPoint.y && Tr.p.z >= MidPoint.z &&
                 Tr.q.x > MidPoint.x && Tr.q.y < MidPoint.y && Tr.q.z >= MidPoint.z &&
                 Tr.r.x > MidPoint.x && Tr.r.y < MidPoint.y && Tr.r.z >= MidPoint.z)
-                return 2;
+                return 1;
 
             if (Tr.p.x < MidPoint.x && Tr.p.y > MidPoint.y && Tr.p.z >= MidPoint.z &&
                 Tr.q.x < MidPoint.x && Tr.q.y > MidPoint.y && Tr.q.z >= MidPoint.z &&
                 Tr.r.x < MidPoint.x && Tr.r.y > MidPoint.y && Tr.r.z >= MidPoint.z)
-                return 3;
+                return 2;
 
             if (Tr.p.x < MidPoint.x && Tr.p.y < MidPoint.y && Tr.p.z >= MidPoint.z &&
                 Tr.q.x < MidPoint.x && Tr.q.y < MidPoint.y && Tr.q.z >= MidPoint.z &&
                 Tr.r.x < MidPoint.x && Tr.r.y < MidPoint.y && Tr.r.z >= MidPoint.z)
-                return 4;
+                return 3;
 
             if (Tr.p.x >= MidPoint.x && Tr.p.y >= MidPoint.y && Tr.p.z < MidPoint.z &&
                 Tr.q.x >= MidPoint.x && Tr.q.y >= MidPoint.y && Tr.q.z < MidPoint.z &&
                 Tr.r.x >= MidPoint.x && Tr.r.y >= MidPoint.y && Tr.r.z < MidPoint.z)
-                return 5;
+                return 4;
 
             if (Tr.p.x > MidPoint.x && Tr.p.y < MidPoint.y && Tr.p.z < MidPoint.z &&
                 Tr.q.x > MidPoint.x && Tr.q.y < MidPoint.y && Tr.q.z < MidPoint.z &&
                 Tr.r.x > MidPoint.x && Tr.r.y < MidPoint.y && Tr.r.z < MidPoint.z)
-                return 6;
+                return 5;
 
             if (Tr.p.x < MidPoint.x && Tr.p.y > MidPoint.y && Tr.p.z < MidPoint.z &&
                 Tr.q.x < MidPoint.x && Tr.q.y > MidPoint.y && Tr.q.z < MidPoint.z &&
                 Tr.r.x < MidPoint.x && Tr.r.y > MidPoint.y && Tr.r.z < MidPoint.z)
-                return 7;
+                return 6;
 
             if (Tr.p.x < MidPoint.x && Tr.p.y < MidPoint.y && Tr.p.z < MidPoint.z &&
                 Tr.q.x < MidPoint.x && Tr.q.y < MidPoint.y && Tr.q.z < MidPoint.z &&
                 Tr.r.x < MidPoint.x && Tr.r.y < MidPoint.y && Tr.r.z < MidPoint.z)
-                return 8;
+                return 7;
 
-            return 0;
+            return -1;
         }
 
 
         template <typename T>
         ssize_t InsertTriangle(Octant<T>& Oct, const Triangle<T>& Tr)
         {
-            int Corner = InWhichCorner<T>(Tr, Oct);
+            int Corner = InWhichCorner(Tr, Oct);
             
             if(Corner && Oct.OctantTriangles.size() > 2)
             {
 
-                if(Oct.SubOctants[Corner - 1] == nullptr)
+                if(Oct.SubOctants[Corner] == nullptr)
                 {   
                     Vector<T> Min = Oct.Min;
                     Vector<T> Max = Oct.Max;
                     
                     if(Corner == 1)
                     {
-                        Oct.SubOctants[Corner - 1] = new Octant<T>;
-                        Oct.SubOctants[Corner - 1]->Min = 0.5*(Min + Max);
-                        Oct.SubOctants[Corner - 1]->Max = Max;
+                        Oct.SubOctants[Corner] = new Octant<T>;
+                        Oct.SubOctants[Corner]->Min = 0.5*(Min + Max);
+                        Oct.SubOctants[Corner]->Max = Max;
 
                     }
                     
                     if(Corner == 2)
                     {
-                        Oct.SubOctants[Corner - 1] = new Octant<T>;
-                        Oct.SubOctants[Corner - 1]->Min = {0.5*(Min.x + Max.x),        Min.y,        0.5*(Min.z + Max.z)};
-                        Oct.SubOctants[Corner - 1]->Max = {       Max.x,        0.5*(Min.y + Max.y),         Max.z};     
+                        Oct.SubOctants[Corner] = new Octant<T>;
+                        Oct.SubOctants[Corner]->Min = {0.5*(Min.x + Max.x),        Min.y,        0.5*(Min.z + Max.z)};
+                        Oct.SubOctants[Corner]->Max = {       Max.x,        0.5*(Min.y + Max.y),         Max.z};     
                     }
                     
                     if(Corner == 3)
                     {
-                        Oct.SubOctants[Corner - 1] = new Octant<T>;
-                        Oct.SubOctants[Corner - 1]->Min = {       Min.x,        0.5*(Min.y + Max.y), 0.5*(Min.z + Max.z)}; 
-                        Oct.SubOctants[Corner - 1]->Max = {0.5*(Min.x + Max.x),        Max.y,                 Max.z};    
+                        Oct.SubOctants[Corner] = new Octant<T>;
+                        Oct.SubOctants[Corner]->Min = {       Min.x,        0.5*(Min.y + Max.y), 0.5*(Min.z + Max.z)}; 
+                        Oct.SubOctants[Corner]->Max = {0.5*(Min.x + Max.x),        Max.y,                 Max.z};    
                     }
 
 
                     if(Corner == 4)
                     {
-                        Oct.SubOctants[Corner - 1] = new Octant<T>;
-                        Oct.SubOctants[Corner - 1]->Min = {       Min.x,               Min.y,        0.5*(Min.z + Max.z)};
-                        Oct.SubOctants[Corner - 1]->Max = {0.5*(Min.x + Max.x), 0.5*(Min.y + Max.y),          Max.z};    
+                        Oct.SubOctants[Corner] = new Octant<T>;
+                        Oct.SubOctants[Corner]->Min = {       Min.x,               Min.y,        0.5*(Min.z + Max.z)};
+                        Oct.SubOctants[Corner]->Max = {0.5*(Min.x + Max.x), 0.5*(Min.y + Max.y),          Max.z};    
                     }
 
                     if(Corner == 5)
                     {
-                        Oct.SubOctants[Corner - 1] = new Octant<T>;
-                        Oct.SubOctants[Corner - 1]->Min = {0.5*(Min.x + Max.x), 0.5*(Min.y + Max.y),          Min.z     };
-                        Oct.SubOctants[Corner - 1]->Max = {       Max.x,               Max.y,        0.5*(Min.z + Max.z)};
+                        Oct.SubOctants[Corner] = new Octant<T>;
+                        Oct.SubOctants[Corner]->Min = {0.5*(Min.x + Max.x), 0.5*(Min.y + Max.y),          Min.z     };
+                        Oct.SubOctants[Corner]->Max = {       Max.x,               Max.y,        0.5*(Min.z + Max.z)};
                     }
 
                     if(Corner == 6)
                     {
-                        Oct.SubOctants[Corner - 1] = new Octant<T>;
-                        Oct.SubOctants[Corner - 1]->Min = {0.5*(Min.x + Max.x),        Min.y,                 Min.z     };
-                        Oct.SubOctants[Corner - 1]->Max = {       Max.x,        0.5*(Min.y + Max.y), 0.5*(Min.z + Max.z)};
+                        Oct.SubOctants[Corner] = new Octant<T>;
+                        Oct.SubOctants[Corner]->Min = {0.5*(Min.x + Max.x),        Min.y,                 Min.z     };
+                        Oct.SubOctants[Corner]->Max = {       Max.x,        0.5*(Min.y + Max.y), 0.5*(Min.z + Max.z)};
                     }
 
                     if(Corner == 7)
                     {
-                        Oct.SubOctants[Corner - 1] = new Octant<T>;
-                        Oct.SubOctants[Corner - 1]->Min = {       Min.x,        0.5*(Min.y + Max.y),          Min.z     };
-                        Oct.SubOctants[Corner - 1]->Max = {0.5*(Min.x + Max.x),        Max.y,        0.5*(Min.z + Max.z)};
+                        Oct.SubOctants[Corner] = new Octant<T>;
+                        Oct.SubOctants[Corner]->Min = {       Min.x,        0.5*(Min.y + Max.y),          Min.z     };
+                        Oct.SubOctants[Corner]->Max = {0.5*(Min.x + Max.x),        Max.y,        0.5*(Min.z + Max.z)};
                     }
 
                     if(Corner == 8)
                     {
-                        Oct.SubOctants[Corner - 1] = new Octant<T>;
-                        Oct.SubOctants[Corner - 1]->Min = Min;
-                        Oct.SubOctants[Corner - 1]->Max = 0.5*(Min + Max);
+                        Oct.SubOctants[Corner] = new Octant<T>;
+                        Oct.SubOctants[Corner]->Min = Min;
+                        Oct.SubOctants[Corner]->Max = 0.5*(Min + Max);
                     }
                 }
 
-                InsertTriangle(*Oct.SubOctants[Corner - 1], Tr);
+                InsertTriangle(*Oct.SubOctants[Corner], Tr);
 
                 return 0;
             }

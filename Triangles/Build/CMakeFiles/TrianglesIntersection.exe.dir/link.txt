@@ -1,0 +1,1 @@
+/usr/bin/c++    -rdynamic CMakeFiles/TrianglesIntersection.exe.dir/Source/TrianglesIntersection.cpp.o  -o TrianglesIntersection.exe 
