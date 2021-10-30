@@ -15,9 +15,6 @@ int main(int argc, char* argv[])
     std::cin >> N;
     assert(std::cin.good());
     
-    //std::vector<Geom::Triangle<double>> TrSet(N);
-    //std::vector<Geom::Triangle<double>>::iterator TrIt = TrSet.begin();
-
     // Maximum possible coordinate for our space
     double Max = 0.0;
 
@@ -42,7 +39,7 @@ int main(int argc, char* argv[])
         ++TrIt;
         ++i;
     }
-    
+
             Space.Min.x = -Max;
             Space.Min.y = -Max;
             Space.Min.z = -Max;
