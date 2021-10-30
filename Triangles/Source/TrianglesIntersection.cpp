@@ -15,12 +15,17 @@ int main(int argc, char* argv[])
     std::cin >> N;
     assert(std::cin.good());
     
-    std::vector<Geom::Triangle<double>> TrSet(N);
-    std::vector<Geom::Triangle<double>>::iterator TrIt = TrSet.begin();
+    //std::vector<Geom::Triangle<double>> TrSet(N);
+    //std::vector<Geom::Triangle<double>>::iterator TrIt = TrSet.begin();
 
     // Maximum possible coordinate for our space
     double Max = 0.0;
-    
+
+    Geom::Octants::Octant<double> Space{ {-Max, -Max, -Max}, {Max, Max, Max} };
+    Space.OctantTriangles.resize(N);
+
+    std::vector<Geom::Triangle<double>>::iterator TrIt = Space.OctantTriangles.begin();
+
     int i = 0;
     while(i < N)
     {
@@ -28,35 +33,34 @@ int main(int argc, char* argv[])
         Geom::ReadTriangle(*TrIt);
 
         if(TrIt->MaxCoordinate > Max)
+        {
             Max = TrIt->MaxCoordinate;
+        }
 
         TrIt->TriangleNumber = i;
 
         ++TrIt;
         ++i;
     }
-
-    Geom::Octants::Octant<double> Space{ {-Max, -Max, -Max}, {Max, Max, Max} };
     
-    TrIt = TrSet.begin();
-    std::vector<Geom::Triangle<double>>::iterator TrEnd = TrSet.end();
+            Space.Min.x = -Max;
+            Space.Min.y = -Max;
+            Space.Min.z = -Max;
+            Space.Max.x = Max;
+            Space.Max.y = Max;
+            Space.Max.z = Max;
 
-    while(TrIt != TrEnd)
-    {
 
-        Geom::Octants::InsertTriangle<double>(Space, *TrIt);
-        
-        ++TrIt;
-    }
+    Geom::Octants::OctantDivide(&Space);
 
     bool IntersectionArray[N]{};
 
-    Geom::TriangleIntersect<double>(&Space, IntersectionArray);
+    Geom::TriangleIntersect(&Space, IntersectionArray);
 
     for(i = 0; i < N; ++i)
         if(IntersectionArray[i] == 1)
             std::cout << i << std::endl;
-        
+
     return 0;
 }
 

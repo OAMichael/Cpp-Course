@@ -222,7 +222,7 @@ namespace Geom {
 
             MaxCoordinate = std::max( {std::abs(Ax), std::abs(Ay), std::abs(Az),
                                        std::abs(Bx), std::abs(By), std::abs(Bz),
-                                       std::abs(Cx), std::abs(Cy), std::abs(Cz)});
+                                       std::abs(Cx), std::abs(Cy), std::abs(Cz)} );
 
         }
 
@@ -243,6 +243,10 @@ namespace Geom {
                                       std::abs(Tr.q.x), std::abs(Tr.q.y), std::abs(Tr.q.z),
                                       std::abs(Tr.r.x), std::abs(Tr.r.y), std::abs(Tr.r.z)} );
         Tr.Validation = Tr.IsValid();
+
+        Tr.pq = {Tr.p, Tr.q};
+        Tr.qr = {Tr.q, Tr.r};
+        Tr.rp = {Tr.r, Tr.p}; 
     }
 
 
@@ -292,7 +296,7 @@ namespace Geom {
 
             
             // if all three points of T2 lie in the same open halfspace induced by T1
-            if (T1p2 * T1q2 > 0 && T1p2 * T1r2 > 0 && T1q2 * T1r2 > 0)
+            if (T1p2 * T1q2 > 0 && T1p2 * T1r2 > 0)
                 return false;
 
 
@@ -302,7 +306,7 @@ namespace Geom {
 
             
             // if all three points of T1 lie in the same open halfspace induced by T2
-            if (T2p1 * T2q1 > 0 && T2p1 * T2r1 > 0 && T2q1 * T2r1 > 0)
+            if (T2p1 * T2q1 > 0 && T2p1 * T2r1 > 0)
                 return false;
 
 
@@ -328,25 +332,25 @@ namespace Geom {
             
 
             // if one of the points of T2 lies in T1's plane
-            if(T1p2 == 0)
-                return IsPointInTriangle(T1, T2.p);
+            if(T1p2 == 0 && IsPointInTriangle(T1, T2.p))
+                return true;
 
-            if(T1q2 == 0)
-                return IsPointInTriangle(T1, T2.q);
+            if(T1q2 == 0 && IsPointInTriangle(T1, T2.q))
+                return true;
 
-            if(T1r2 == 0)
-                return IsPointInTriangle(T1, T2.r);
+            if(T1r2 == 0 && IsPointInTriangle(T1, T2.r))
+                return true;
 
 
             // if one of the points of T1 lies in T2's plane
-            if(T2p1 == 0)
-                return IsPointInTriangle(T2, T1.p);
+            if(T2p1 == 0 && IsPointInTriangle(T2, T1.p))
+                return true;
 
-            if(T2q1 == 0)
-                return IsPointInTriangle(T2, T1.q);
+            if(T2q1 == 0 && IsPointInTriangle(T2, T1.q))
+                return true;
 
-            if(T2r1 == 0)
-                return IsPointInTriangle(T2, T1.r);
+            if(T2r1 == 0 && IsPointInTriangle(T2, T1.r))
+                return true;
 
 
             // if no vertex lie in other triangle's plane
@@ -622,10 +626,10 @@ namespace Geom {
         };
 
 
-        // 1) x >= 0, y >= 0, z >= 0
-        // 2) x > 0, y < 0, z >= 0
-        // 3) x < 0, y > 0, z >= 0
-        // 4) x < 0, y < 0, z >= 0
+        // 1) x > 0, y > 0, z > 0
+        // 2) x > 0, y < 0, z > 0
+        // 3) x < 0, y > 0, z > 0
+        // 4) x < 0, y < 0, z > 0
         // 5) x > 0, y > 0, z < 0
         // 6) x > 0, y < 0, z < 0
         // 7) x < 0, y > 0, z < 0
@@ -637,29 +641,29 @@ namespace Geom {
         {
             Vector<T> MidPoint = 0.5*(Oct.Max + Oct.Min);
 
-            if (Tr.p.x >= MidPoint.x && Tr.p.y >= MidPoint.y && Tr.p.z >= MidPoint.z &&
-                Tr.q.x >= MidPoint.x && Tr.q.y >= MidPoint.y && Tr.q.z >= MidPoint.z &&
-                Tr.r.x >= MidPoint.x && Tr.r.y >= MidPoint.y && Tr.r.z >= MidPoint.z)
+            if (Tr.p.x > MidPoint.x && Tr.p.y > MidPoint.y && Tr.p.z > MidPoint.z &&
+                Tr.q.x > MidPoint.x && Tr.q.y > MidPoint.y && Tr.q.z > MidPoint.z &&
+                Tr.r.x > MidPoint.x && Tr.r.y > MidPoint.y && Tr.r.z > MidPoint.z)
                 return 0;
 
-            if (Tr.p.x > MidPoint.x && Tr.p.y < MidPoint.y && Tr.p.z >= MidPoint.z &&
-                Tr.q.x > MidPoint.x && Tr.q.y < MidPoint.y && Tr.q.z >= MidPoint.z &&
-                Tr.r.x > MidPoint.x && Tr.r.y < MidPoint.y && Tr.r.z >= MidPoint.z)
+            if (Tr.p.x > MidPoint.x && Tr.p.y < MidPoint.y && Tr.p.z > MidPoint.z &&
+                Tr.q.x > MidPoint.x && Tr.q.y < MidPoint.y && Tr.q.z > MidPoint.z &&
+                Tr.r.x > MidPoint.x && Tr.r.y < MidPoint.y && Tr.r.z > MidPoint.z)
                 return 1;
 
-            if (Tr.p.x < MidPoint.x && Tr.p.y > MidPoint.y && Tr.p.z >= MidPoint.z &&
-                Tr.q.x < MidPoint.x && Tr.q.y > MidPoint.y && Tr.q.z >= MidPoint.z &&
-                Tr.r.x < MidPoint.x && Tr.r.y > MidPoint.y && Tr.r.z >= MidPoint.z)
+            if (Tr.p.x < MidPoint.x && Tr.p.y > MidPoint.y && Tr.p.z > MidPoint.z &&
+                Tr.q.x < MidPoint.x && Tr.q.y > MidPoint.y && Tr.q.z > MidPoint.z &&
+                Tr.r.x < MidPoint.x && Tr.r.y > MidPoint.y && Tr.r.z > MidPoint.z)
                 return 2;
 
-            if (Tr.p.x < MidPoint.x && Tr.p.y < MidPoint.y && Tr.p.z >= MidPoint.z &&
-                Tr.q.x < MidPoint.x && Tr.q.y < MidPoint.y && Tr.q.z >= MidPoint.z &&
-                Tr.r.x < MidPoint.x && Tr.r.y < MidPoint.y && Tr.r.z >= MidPoint.z)
+            if (Tr.p.x < MidPoint.x && Tr.p.y < MidPoint.y && Tr.p.z > MidPoint.z &&
+                Tr.q.x < MidPoint.x && Tr.q.y < MidPoint.y && Tr.q.z > MidPoint.z &&
+                Tr.r.x < MidPoint.x && Tr.r.y < MidPoint.y && Tr.r.z > MidPoint.z)
                 return 3;
 
-            if (Tr.p.x >= MidPoint.x && Tr.p.y >= MidPoint.y && Tr.p.z < MidPoint.z &&
-                Tr.q.x >= MidPoint.x && Tr.q.y >= MidPoint.y && Tr.q.z < MidPoint.z &&
-                Tr.r.x >= MidPoint.x && Tr.r.y >= MidPoint.y && Tr.r.z < MidPoint.z)
+            if (Tr.p.x > MidPoint.x && Tr.p.y > MidPoint.y && Tr.p.z < MidPoint.z &&
+                Tr.q.x > MidPoint.x && Tr.q.y > MidPoint.y && Tr.q.z < MidPoint.z &&
+                Tr.r.x > MidPoint.x && Tr.r.y > MidPoint.y && Tr.r.z < MidPoint.z)
                 return 4;
 
             if (Tr.p.x > MidPoint.x && Tr.p.y < MidPoint.y && Tr.p.z < MidPoint.z &&
@@ -682,115 +686,137 @@ namespace Geom {
 
 
         template <typename T>
-        ssize_t InsertTriangle(Octant<T>& Oct, const Triangle<T>& Tr)
+        void OctantDivide(Octant<T>* SubSpace)
         {
-            int Corner = InWhichCorner(Tr, Oct);
-            
-            if(Corner != -1 && Oct.OctantTriangles.size() > 2)
-            {
+            if(SubSpace->OctantTriangles.size() < 3)
+                return;
 
-                if(Oct.SubOctants[Corner] == nullptr)
-                {   
-                    Vector<T> Min = Oct.Min;
-                    Vector<T> Max = Oct.Max;
+            typename std::vector<Triangle<T>>::iterator Iter = SubSpace->OctantTriangles.begin();
+            typename std::vector<Triangle<T>>::iterator IterEnd = SubSpace->OctantTriangles.end();
+
+            int Corner = -1;
+            while(Iter != IterEnd)
+            { 
+                Corner = InWhichCorner(*Iter, *SubSpace);
+
+                if(Corner != -1)
+                {
+                    if(SubSpace->SubOctants[Corner] == nullptr)
+                    {   
+                        Vector<T> Min = SubSpace->Min;
+                        Vector<T> Max = SubSpace->Max;
+                        
+                        if(Corner == 0)
+                        {
+                            SubSpace->SubOctants[Corner] = new Octant<T>;
+                            SubSpace->SubOctants[Corner]->Min = 0.5*(Min + Max);
+                            SubSpace->SubOctants[Corner]->Max = Max;
+
+                        }
+                        
+                        if(Corner == 1)
+                        {
+                            SubSpace->SubOctants[Corner] = new Octant<T>;
+                            SubSpace->SubOctants[Corner]->Min = {0.5*(Min.x + Max.x),        Min.y,        0.5*(Min.z + Max.z)};
+                            SubSpace->SubOctants[Corner]->Max = {       Max.x,        0.5*(Min.y + Max.y),         Max.z      };     
+                        }
+                        
+                        if(Corner == 2)
+                        {
+                            SubSpace->SubOctants[Corner] = new Octant<T>;
+                            SubSpace->SubOctants[Corner]->Min = {       Min.x,        0.5*(Min.y + Max.y), 0.5*(Min.z + Max.z)}; 
+                            SubSpace->SubOctants[Corner]->Max = {0.5*(Min.x + Max.x),        Max.y,                 Max.z     };    
+                        }
+
+
+                        if(Corner == 3)
+                        {
+                            SubSpace->SubOctants[Corner] = new Octant<T>;
+                            SubSpace->SubOctants[Corner]->Min = {       Min.x,               Min.y,        0.5*(Min.z + Max.z)};
+                            SubSpace->SubOctants[Corner]->Max = {0.5*(Min.x + Max.x), 0.5*(Min.y + Max.y),          Max.z     };    
+                        }
+
+                        if(Corner == 4)
+                        {
+                            SubSpace->SubOctants[Corner] = new Octant<T>;
+                            SubSpace->SubOctants[Corner]->Min = {0.5*(Min.x + Max.x), 0.5*(Min.y + Max.y),          Min.z     };
+                            SubSpace->SubOctants[Corner]->Max = {       Max.x,               Max.y,        0.5*(Min.z + Max.z)};
+                        }
+
+                        if(Corner == 5)
+                        {
+                            SubSpace->SubOctants[Corner] = new Octant<T>;
+                            SubSpace->SubOctants[Corner]->Min = {0.5*(Min.x + Max.x),        Min.y,                 Min.z     };
+                            SubSpace->SubOctants[Corner]->Max = {       Max.x,        0.5*(Min.y + Max.y), 0.5*(Min.z + Max.z)};
+                        }
+
+                        if(Corner == 6)
+                        {
+                            SubSpace->SubOctants[Corner] = new Octant<T>;
+                            SubSpace->SubOctants[Corner]->Min = {       Min.x,        0.5*(Min.y + Max.y),          Min.z     };
+                            SubSpace->SubOctants[Corner]->Max = {0.5*(Min.x + Max.x),        Max.y,        0.5*(Min.z + Max.z)};
+                        }
+
+                        if(Corner == 7)
+                        {
+                            SubSpace->SubOctants[Corner] = new Octant<T>;
+                            SubSpace->SubOctants[Corner]->Min = Min;
+                            SubSpace->SubOctants[Corner]->Max = 0.5*(Min + Max);
+                        }
+                    }
+
+                    SubSpace->SubOctants[Corner]->OctantTriangles.push_back(*Iter);
+                    Iter = SubSpace->OctantTriangles.erase(Iter);
+                    --IterEnd;
+
                     
-                    if(Corner == 0)
-                    {
-                        Oct.SubOctants[Corner] = new Octant<T>;
-                        Oct.SubOctants[Corner]->Min = 0.5*(Min + Max);
-                        Oct.SubOctants[Corner]->Max = Max;
-
-                    }
-                    
-                    if(Corner == 1)
-                    {
-                        Oct.SubOctants[Corner] = new Octant<T>;
-                        Oct.SubOctants[Corner]->Min = {0.5*(Min.x + Max.x),        Min.y,        0.5*(Min.z + Max.z)};
-                        Oct.SubOctants[Corner]->Max = {       Max.x,        0.5*(Min.y + Max.y),         Max.z};     
-                    }
-                    
-                    if(Corner == 2)
-                    {
-                        Oct.SubOctants[Corner] = new Octant<T>;
-                        Oct.SubOctants[Corner]->Min = {       Min.x,        0.5*(Min.y + Max.y), 0.5*(Min.z + Max.z)}; 
-                        Oct.SubOctants[Corner]->Max = {0.5*(Min.x + Max.x),        Max.y,                 Max.z};    
-                    }
-
-
-                    if(Corner == 3)
-                    {
-                        Oct.SubOctants[Corner] = new Octant<T>;
-                        Oct.SubOctants[Corner]->Min = {       Min.x,               Min.y,        0.5*(Min.z + Max.z)};
-                        Oct.SubOctants[Corner]->Max = {0.5*(Min.x + Max.x), 0.5*(Min.y + Max.y),          Max.z};    
-                    }
-
-                    if(Corner == 4)
-                    {
-                        Oct.SubOctants[Corner] = new Octant<T>;
-                        Oct.SubOctants[Corner]->Min = {0.5*(Min.x + Max.x), 0.5*(Min.y + Max.y),          Min.z     };
-                        Oct.SubOctants[Corner]->Max = {       Max.x,               Max.y,        0.5*(Min.z + Max.z)};
-                    }
-
-                    if(Corner == 5)
-                    {
-                        Oct.SubOctants[Corner] = new Octant<T>;
-                        Oct.SubOctants[Corner]->Min = {0.5*(Min.x + Max.x),        Min.y,                 Min.z     };
-                        Oct.SubOctants[Corner]->Max = {       Max.x,        0.5*(Min.y + Max.y), 0.5*(Min.z + Max.z)};
-                    }
-
-                    if(Corner == 6)
-                    {
-                        Oct.SubOctants[Corner] = new Octant<T>;
-                        Oct.SubOctants[Corner]->Min = {       Min.x,        0.5*(Min.y + Max.y),          Min.z     };
-                        Oct.SubOctants[Corner]->Max = {0.5*(Min.x + Max.x),        Max.y,        0.5*(Min.z + Max.z)};
-                    }
-
-                    if(Corner == 7)
-                    {
-                        Oct.SubOctants[Corner] = new Octant<T>;
-                        Oct.SubOctants[Corner]->Min = Min;
-                        Oct.SubOctants[Corner]->Max = 0.5*(Min + Max);
-                    }
                 }
+                else 
+                ++Iter;
 
-                InsertTriangle(*Oct.SubOctants[Corner], Tr);
-
-                return 0;
             }
             
-            Oct.OctantTriangles.push_back(Tr);
+            for(int i = 0; i < 8; ++i)
+            {
+                if(SubSpace->SubOctants[i] != nullptr)
+                    OctantDivide(SubSpace->SubOctants[i]);
+            }
 
-            return 0;
         }
-
     }
-
 
         template <typename T>
         void TriangleIntersect(Octants::Octant<T>* OcTree, bool* IntArr)
         {
             int i = 0;
-    
+            
             typename std::vector<Triangle<T>>::iterator Iter1;
             typename std::vector<Triangle<T>>::iterator Iter2;
-            
-            for(Iter1 = OcTree->OctantTriangles.begin(); Iter1 != --(OcTree->OctantTriangles.end()); ++Iter1)
+
+            typename std::vector<Triangle<T>>::iterator IterEnd = OcTree->OctantTriangles.end();
+            typename std::vector<Triangle<T>>::iterator IterStart = OcTree->OctantTriangles.begin();
+    
+
+            // if there is only one triangle (it cannot be less) in Octant then just push it to nested octants
+            if(OcTree->OctantTriangles.size() > 1)
             {
-                for(Iter2 = Iter1 + 1; Iter2 != OcTree->OctantTriangles.end(); ++Iter2)
-                    if((IntArr[Iter1->TriangleNumber] != 1 || IntArr[Iter2->TriangleNumber] != 1) && IsIntersect(*Iter1, *Iter2))
-                    {   
-                        IntArr[Iter1->TriangleNumber] = 1;
-                        IntArr[Iter2->TriangleNumber] = 1;
-                    }   
+                for(Iter1 = IterStart; Iter1 != IterEnd - 1; ++Iter1)
+                {
+                    for(Iter2 = Iter1 + 1; Iter2 != IterEnd; ++Iter2)
+                        if((IntArr[Iter1->TriangleNumber] == 0 || IntArr[Iter2->TriangleNumber] == 0) && IsIntersect(*Iter1, *Iter2))
+                        {  
+                            IntArr[Iter1->TriangleNumber] = 1;
+                            IntArr[Iter2->TriangleNumber] = 1;
+                        }   
+                }
             }
-
-
+    
             // specially made to take into account cases when Tr does not fit
             // in the next octant but it has no intersections with triangles
             // in its own octant and has intersections with triangles in
             // lower nested octants. So Tr is being pushed into all suboctants
             // and then this function being called for each suboctant recursively
-            for(Iter1 = OcTree->OctantTriangles.begin(); Iter1 != OcTree->OctantTriangles.end(); ++Iter1)
+            for(Iter1 = IterStart; Iter1 != IterEnd; ++Iter1)
             {
                 if(IntArr[Iter1->TriangleNumber] == 0)
                     for(i = 0; i < 8; ++i)
@@ -799,6 +825,7 @@ namespace Geom {
                             OcTree->SubOctants[i]->OctantTriangles.push_back(*Iter1);
                         }
             }
+            
 
             for(i = 0; i < 8; ++i)
             {
