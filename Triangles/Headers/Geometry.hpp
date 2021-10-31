@@ -173,6 +173,8 @@ namespace Geom {
 
         bool Validation = false;
 
+        bool IntersectIndex = false;
+
         T MaxCoordinate = NaN<T>;
 
         int TriangleNumber = -1;
@@ -634,7 +636,7 @@ namespace Geom {
         // 6) x > 0, y < 0, z < 0
         // 7) x < 0, y > 0, z < 0
         // 8) x < 0, y < 0, z < 0
-        // In which corner of the octant the triangle lies
+        // Which corner of the octant the triangle lies in
         // Returns -1 if triangle does not fit in one of the corners
         template <typename T>
         int InWhichCorner(const Triangle<T>& Tr, const Octant<T>& Oct)
@@ -768,12 +770,10 @@ namespace Geom {
                     SubSpace->SubOctants[Corner]->OctantTriangles.push_back(*Iter);
                     Iter = SubSpace->OctantTriangles.erase(Iter);
                     --IterEnd;
-
                     
                 }
                 else 
                 ++Iter;
-
             }
             
             for(int i = 0; i < 8; ++i)
