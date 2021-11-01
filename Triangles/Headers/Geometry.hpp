@@ -355,10 +355,8 @@ namespace Geom {
                 return true;
 
 
-            // if no vertex lie in other triangle's plane
 
-
-            // making point p one with determinant sign different from others
+            // making point p one with determinant sign(or zero) different from others
             while(T2r1 * T2q1 < 0)
             {
                 SwapPoints(T1.p, T1.q);                                                                 
@@ -639,9 +637,9 @@ namespace Geom {
         // Which corner of the octant the triangle lies in
         // Returns -1 if triangle does not fit in one of the corners
         template <typename T>
-        int InWhichCorner(const Triangle<T>& Tr, const Octant<T>& Oct)
+        int InWhichCorner(const Triangle<T>& Tr, const Octant<T>* Oct)
         {
-            Vector<T> MidPoint = 0.5*(Oct.Max + Oct.Min);
+            Vector<T> MidPoint = 0.5*(Oct->Max + Oct->Min);
 
             if (Tr.p.x > MidPoint.x && Tr.p.y > MidPoint.y && Tr.p.z > MidPoint.z &&
                 Tr.q.x > MidPoint.x && Tr.q.y > MidPoint.y && Tr.q.z > MidPoint.z &&
@@ -699,7 +697,7 @@ namespace Geom {
             int Corner = -1;
             while(Iter != IterEnd)
             { 
-                Corner = InWhichCorner(*Iter, *SubSpace);
+                Corner = InWhichCorner(*Iter, SubSpace);
 
                 if(Corner != -1)
                 {
@@ -778,63 +776,81 @@ namespace Geom {
             
             for(int i = 0; i < 8; ++i)
             {
-                if(SubSpace->SubOctants[i] != nullptr)
+                if(SubSpace->SubOctants[i])
                     OctantDivide(SubSpace->SubOctants[i]);
             }
 
         }
-    }
+
 
         template <typename T>
-        void TriangleIntersect(Octants::Octant<T>* OcTree, bool* IntArr)
+        void TreeDestroy(Octant<T>* Tree)
         {
             int i = 0;
-            
-            typename std::vector<Triangle<T>>::iterator Iter1;
-            typename std::vector<Triangle<T>>::iterator Iter2;
-
-            typename std::vector<Triangle<T>>::iterator IterEnd = OcTree->OctantTriangles.end();
-            typename std::vector<Triangle<T>>::iterator IterStart = OcTree->OctantTriangles.begin();
-    
-
-            // if there is only one triangle (it cannot be less) in Octant then just push it to nested octants
-            if(OcTree->OctantTriangles.size() > 1)
-            {
-                for(Iter1 = IterStart; Iter1 != IterEnd - 1; ++Iter1)
-                {
-                    for(Iter2 = Iter1 + 1; Iter2 != IterEnd; ++Iter2)
-                        if((IntArr[Iter1->TriangleNumber] == 0 || IntArr[Iter2->TriangleNumber] == 0) && IsIntersect(*Iter1, *Iter2))
-                        {  
-                            IntArr[Iter1->TriangleNumber] = 1;
-                            IntArr[Iter2->TriangleNumber] = 1;
-                        }   
-                }
-            }
-    
-            // specially made to take into account cases when Tr does not fit
-            // in the next octant but it has no intersections with triangles
-            // in its own octant and has intersections with triangles in
-            // lower nested octants. So Tr is being pushed into all suboctants
-            // and then this function being called for each suboctant recursively
-            for(Iter1 = IterStart; Iter1 != IterEnd; ++Iter1)
-            {
-                if(IntArr[Iter1->TriangleNumber] == 0)
-                    for(i = 0; i < 8; ++i)
-                        if (OcTree->SubOctants[i] != nullptr)
-                        {
-                            OcTree->SubOctants[i]->OctantTriangles.push_back(*Iter1);
-                        }
-            }
-            
+            for(i = 0; i < 8; ++i)
+                if(Tree->SubOctants[i])
+                    TreeDestroy(Tree->SubOctants[i]);
 
             for(i = 0; i < 8; ++i)
-            {
-                if(OcTree->SubOctants[i] != nullptr)
-                    TriangleIntersect(OcTree->SubOctants[i], IntArr);
-            } 
+                delete Tree->SubOctants[i];
 
             return;
         }
+
+
+    }
+
+    template <typename T>
+    void TriangleIntersect(Octants::Octant<T>* OcTree, bool* IntArr)
+    {
+        int i = 0;
+        
+        using Iter = typename std::vector<Triangle<T>>::iterator;
+        Iter Iter1;
+        Iter Iter2;
+
+        Iter IterEnd = OcTree->OctantTriangles.end();
+        Iter IterStart = OcTree->OctantTriangles.begin();
+
+
+        // if there is only one triangle (it cannot be less) in Octant then just push it to nested octants
+        if(OcTree->OctantTriangles.size() > 1)
+        {
+            for(Iter1 = IterStart; Iter1 != IterEnd - 1; ++Iter1)
+            {
+                for(Iter2 = Iter1 + 1; Iter2 != IterEnd; ++Iter2)
+                    if((IntArr[Iter1->TriangleNumber] == 0 || IntArr[Iter2->TriangleNumber] == 0) && IsIntersect(*Iter1, *Iter2))
+                    {  
+                        IntArr[Iter1->TriangleNumber] = 1;
+                        IntArr[Iter2->TriangleNumber] = 1;
+                    }   
+            }
+        }
+
+        // specially made to take into account cases when Tr does not fit
+        // in the next octant but it has no intersections with triangles
+        // in its own octant and has intersections with triangles in
+        // lower nested octants. So Tr is being pushed into all suboctants
+        // and then this function being called for each suboctant recursively
+        for(Iter1 = IterStart; Iter1 != IterEnd; ++Iter1)
+        {
+            if(IntArr[Iter1->TriangleNumber] == 0)
+                for(i = 0; i < 8; ++i)
+                    if (OcTree->SubOctants[i] != nullptr)
+                    {
+                        OcTree->SubOctants[i]->OctantTriangles.push_back(*Iter1);
+                    }
+        }
+        
+
+        for(i = 0; i < 8; ++i)
+        {
+            if(OcTree->SubOctants[i] != nullptr)
+                TriangleIntersect(OcTree->SubOctants[i], IntArr);
+        } 
+
+        return;
+    }
 
 }
 

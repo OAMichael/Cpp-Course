@@ -54,6 +54,8 @@ int main(int argc, char* argv[])
 
     Geom::TriangleIntersect(&Space, IntersectionArray);
 
+    Geom::Octants::TreeDestroy(&Space);
+
     for(i = 0; i < N; ++i)
         if(IntersectionArray[i] == 1)
             std::cout << i << std::endl;
