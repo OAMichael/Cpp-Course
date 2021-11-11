@@ -63,7 +63,6 @@ namespace Geom {
             z = a.z;
             return *this;
         }
-
     };
 
 
@@ -187,7 +186,6 @@ namespace Geom {
                                        MaxCoordinate{std::max( {std::abs(Ax), std::abs(Ay), std::abs(Az),
                                                                 std::abs(Bx), std::abs(By), std::abs(Bz),
                                                                 std::abs(Cx), std::abs(Cy), std::abs(Cz)} )} {}
-
 
     };
 

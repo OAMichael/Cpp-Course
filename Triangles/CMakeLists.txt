@@ -6,7 +6,9 @@ set(CMAKE_CXX_STANDARD 17)
 set(SOURCE_EXE ${CMAKE_CURRENT_SOURCE_DIR}/Source/TrianglesIntersection.cpp)
 set(SOURCE_LIB ${CMAKE_CURRENT_SOURCE_DIR}/Headers)
 
+
 add_executable(TrianglesIntersection.exe)
+
 
 add_compile_options(
     -Werror
