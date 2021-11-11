@@ -18,15 +18,9 @@ namespace Geom {
         T y = NaN<T>;
         T z = NaN<T>;
 
-        Point()
-        {}
+        Point() {}
 
-        Point(T px, T py, T pz)
-        {   
-            x = px;
-            y = py;
-            z = pz;
-        }
+        Point(T px, T py, T pz) : x{px}, y{py}, z{pz} {}
     };
 
 
@@ -39,11 +33,9 @@ namespace Geom {
         Segment()
         {}
 
-        Segment(Point<T>& a, Point<T>& b) { m.x = a.x; m.y = a.y; m.z = a.z; 
-                                            n.x = b.x; n.y = b.y; n.z = b.z;}
+        Segment(Point<T>& a, Point<T>& b) : m({a.x, a.y, a.z}), n({b.x, b.y, b.z}) {}
 
-        Segment(T x1, T y1, T z1, T x2, T y2, T z2) 
-        { m.x = x1; m.y = y1; m.z = z1; n.x = x2; n.y = y2; n.z = z2;}
+        Segment(T x1, T y1, T z1, T x2, T y2, T z2) : m({x1, y1, z1}), n({x2, y2, z2}) {}
     };
 
 
@@ -54,17 +46,11 @@ namespace Geom {
         T y = NaN<T>;
         T z = NaN<T>;
 
-        Vector(T vx, T vy, T vz)
-        {
-            x = vx;
-            y = vy;
-            z = vz;
-        }
+        Vector(T vx, T vy, T vz) : x{vx}, y{vy}, z{vz} {}
 
-        Vector()
-        {}
+        Vector() {}
 
-        const double GetLenght()
+        double GetLenght() const
         {
             return sqrt(x * x + y * y + z * z);
         }
@@ -143,7 +129,7 @@ namespace Geom {
 
     //points comparing operator
     template <typename T>
-    const bool operator==(const Point<T>& a, const Point<T>& b)
+    bool operator==(const Point<T>& a, const Point<T>& b)
     {
         return (a.x == b.x && a.y == b.y && a.z == b.z);
     }
@@ -161,7 +147,7 @@ namespace Geom {
         Segment<T> qr = {q, r};
         Segment<T> rp = {r, p};
 
-        bool IsValid()
+        bool IsValid() const
         {
             // if cross product is zero then the triangle is invalid
             Vector<T> Vec = (q - p)^(r - q);
@@ -169,6 +155,12 @@ namespace Geom {
                 return false;
 
             return true;
+        }
+
+
+        double GetPerimeter() const
+        {
+            return ((p - q).GetLenght() + (q - r).GetLenght() + (r - p).GetLenght());
         }
 
         bool Validation = false;
@@ -180,53 +172,21 @@ namespace Geom {
         int TriangleNumber = -1;
         
 
-        const double GetPerimeter()
-        {
-            return ((p - q).GetLenght() + (q - r).GetLenght() + (r - p).GetLenght());
-        }
+        Triangle() {}
 
-        Triangle()
-        {}
 
-        Triangle(Point<T> A, Point<T> B, Point<T> C)
-        {
-            p.x = A.x;
-            p.y = A.y;
-            p.z = A.z;
-            q.x = B.x;
-            q.y = B.y;
-            q.z = B.z;
-            r.x = C.x;
-            r.y = C.y;
-            r.z = C.z;
+        Triangle(Point<T> A, Point<T> B, Point<T> C) : p{A}, q{B}, r{C}, pq{A, B}, qr{B, C}, rp{C, A}, 
+                                                       MaxCoordinate{std::max( {std::abs(A.x), std::abs(A.y), std::abs(A.z),
+                                                                                std::abs(B.x), std::abs(B.y), std::abs(B.z),
+                                                                                std::abs(C.x), std::abs(C.y), std::abs(C.z)} )} {}
 
-            pq = {p, q};
-            qr = {q, r};
-            rp = {r, p};
 
-        }
-
-        Triangle(T Ax, T Ay, T Az, T Bx, T By, T Bz, T Cx, T Cy, T Cz)
-        {
-            p.x = Ax;
-            p.y = Ay;
-            p.z = Az;
-            q.x = Bx;
-            q.y = By;
-            q.z = Bz;
-            r.x = Cx;
-            r.y = Cy;
-            r.z = Cz;
-
-            pq = {p, q};
-            qr = {q, r};
-            rp = {r, p};
-
-            MaxCoordinate = std::max( {std::abs(Ax), std::abs(Ay), std::abs(Az),
-                                       std::abs(Bx), std::abs(By), std::abs(Bz),
-                                       std::abs(Cx), std::abs(Cy), std::abs(Cz)} );
-
-        }
+        Triangle( T Ax, T Ay, T Az, 
+                  T Bx, T By, T Bz,
+                  T Cx, T Cy, T Cz ) : p{Ax, Ay, Az}, q{Bx, By, Bz}, r{Cx, Cy, Cz}, pq{p, q}, qr{q, r}, rp{r, p},
+                                       MaxCoordinate{std::max( {std::abs(Ax), std::abs(Ay), std::abs(Az),
+                                                                std::abs(Bx), std::abs(By), std::abs(Bz),
+                                                                std::abs(Cx), std::abs(Cy), std::abs(Cz)} )} {}
 
 
     };
@@ -239,7 +199,8 @@ namespace Geom {
                  >> Tr.q.x >> Tr.q.y >> Tr.q.z
                  >> Tr.r.x >> Tr.r.y >> Tr.r.z;
 
-        assert(std::cin.good());
+
+        assert(!std::cin.fail());
 
         Tr.MaxCoordinate = std::max( {std::abs(Tr.p.x), std::abs(Tr.p.y), std::abs(Tr.p.z),
                                       std::abs(Tr.q.x), std::abs(Tr.q.y), std::abs(Tr.q.z),
@@ -259,10 +220,10 @@ namespace Geom {
     bool Is2DIntersect(const Triangle<T>& T1, const Triangle<T>& T2);
 
     template <typename T>
-    const bool IsParallel(const Vector<T>& a, const Vector<T>& b);
+    bool IsParallel(const Vector<T>& a, const Vector<T>& b);
 
     template <typename T>
-    const bool IsParallel(const Segment<T>& a, const Segment<T>& b);
+    bool IsParallel(const Segment<T>& a, const Segment<T>& b);
 
     template <typename T>
     bool Is2DSegmIntersect(const Segment<T>& a, const Segment<T>& b);
@@ -376,7 +337,6 @@ namespace Geom {
                 T1r2 = Determ(T1.p, T1.q, T1.r, T2.r);
             }
 
-
             // swapping point q and r for triangles to be oriented counter-clockwise 
             if(Determ(T2.p, T2.q, T2.r, T1.p) < 0)
                 SwapPoints(T2.q, T2.r);
@@ -472,7 +432,7 @@ namespace Geom {
 
 
     template <typename T>
-    const bool IsParallel(const Vector<T>& a, const Vector<T>& b)
+    bool IsParallel(const Vector<T>& a, const Vector<T>& b)
     {   
         Vector<T> tmp = a^b;
         if (tmp.x == 0 && tmp.y == 0 && tmp.z == 0)    //is cross product zero
@@ -483,7 +443,7 @@ namespace Geom {
 
 
     template <typename T>
-    const bool IsParallel(const Segment<T>& a, const Segment<T>& b)
+    bool IsParallel(const Segment<T>& a, const Segment<T>& b)
     {   
         return IsParallel(a.m - a.n, b.m - b.n);
     }
