@@ -27,7 +27,6 @@ int main()
     }
 
 
-//  std::cout << "Hits: ";
     std::cout << MyCache.hits() << std::endl;
 
     return 0;

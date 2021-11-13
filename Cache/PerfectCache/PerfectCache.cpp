@@ -27,9 +27,6 @@ int main()
     assert(std::cin.good());
 
 
-    
-
- // std::cout << "Hits: ";
     std::cout << PerfectCache(CacheSize, NumberOfPages) << std::endl;
 
     return 0;
