@@ -27,8 +27,8 @@ int main()
     }
 
 
-    //std::cout << MyCache.In.size() << " " << MyCache.Out.size() << " " << MyCache.Hot.size() << std::endl;
-    std::cout << "Hits: " << MyCache.hits() << std::endl;
+//  std::cout << "Hits: ";
+    std::cout << MyCache.hits() << std::endl;
 
     return 0;
 }

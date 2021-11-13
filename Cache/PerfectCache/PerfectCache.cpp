@@ -6,6 +6,7 @@
 #include <unordered_map>
 
 
+// Function prototypes because the last one is too messy
 void PrintCache(std::list<int>& Cache);
 size_t FindFutureNumber(const std::vector<int>& Pages, const std::vector<int>::iterator& Start, const int& Page);
 size_t PerfectCache(const size_t CacheSize, const size_t NumberOfPages);
@@ -28,14 +29,14 @@ int main()
 
     
 
-    std::cout << "Hits: ";
+ // std::cout << "Hits: ";
     std::cout << PerfectCache(CacheSize, NumberOfPages) << std::endl;
 
     return 0;
 }
 
 
-
+// Function which finds how many other pages before one with same value
 size_t FindFutureNumber(const std::vector<int>& Pages, const std::vector<int>::iterator& Start, const int& Page)
 {
     size_t Counter = 0;
@@ -55,6 +56,7 @@ size_t FindFutureNumber(const std::vector<int>& Pages, const std::vector<int>::i
 }
 
 
+// Just printing all elements of cache at present moment
 void PrintCache(std::list<int>& Cache)
 {
     for(std::list<int>::iterator It = Cache.begin(); It != Cache.end(); ++It)
@@ -89,10 +91,15 @@ size_t PerfectCache(const size_t CacheSize, const size_t NumberOfPages)
 
     MapIter FoundPage;
 
+    // Going through whole array again to fill in the cache
     for(PagesIter; PagesIter != PagesEnd; ++PagesIter)
     {
         FoundPage = Map.find(*PagesIter);
 
+        // If needed page is found, then increase hit counter 
+        // and replace it on the top within the cache.
+        
+        // If it is not, remove particular page and insert new one
         if(FoundPage == Map.end())
         {
             if(Cache.size() >= CacheSize)
@@ -103,6 +110,7 @@ size_t PerfectCache(const size_t CacheSize, const size_t NumberOfPages)
                 ListIter CacheIter = Cache.begin();
                 ListIter CacheEnd  = Cache.end();
 
+                // Finding page in the cache which will appear at the most distance 
                 for(CacheIter; CacheIter != CacheEnd; ++CacheIter)
                 {
                     if(FindFutureNumber(Pages, PagesIter, *CacheIter) > MaxFutureNumber)
@@ -112,7 +120,7 @@ size_t PerfectCache(const size_t CacheSize, const size_t NumberOfPages)
                     }
                 }
 
-
+                // And removing it
                 for(CacheIter = Cache.begin(); CacheIter != CacheEnd; ++CacheIter)
                 {
                     if(*CacheIter == WhatPage)

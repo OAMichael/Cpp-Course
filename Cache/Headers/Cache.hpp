@@ -4,9 +4,11 @@
 
 namespace Caches
 {
+    // Division of size between the lists
     const double InSizeFrac = 0.25;
     const double OutSizeFrac = 0.5;
 
+    // Types of lists
     enum ListType
     {
         IN,
@@ -15,6 +17,8 @@ namespace Caches
     };
 
 
+    // Single node of our list
+    // Contains information about <data> and type of its list
     template <typename T> 
     struct Node
     {
@@ -23,6 +27,7 @@ namespace Caches
     };
 
 
+    // Description of one of the lists
     template <typename T>
     class DataList 
     {   
@@ -57,6 +62,7 @@ namespace Caches
     };
 
 
+    // Main class of whole program
     template <typename T, typename Key>
     class Cache2Q 
     {
@@ -68,28 +74,33 @@ namespace Caches
 
     public:
 
+        // Declaration of cache lists
         DataList<T> In{ (static_cast<size_t>(CacheSize * InSizeFrac)  > 0) ? static_cast<size_t>(CacheSize * InSizeFrac)  : 1};
 
         DataList<T> Out{(static_cast<size_t>(CacheSize * OutSizeFrac) > 0) ? static_cast<size_t>(CacheSize * OutSizeFrac) : 1};
 
         DataList<T> Hot{(CacheSize > In.size() + Out.size()) ? CacheSize - In.size() - Out.size() : 1};  
 
-    
-
         using ListIter = typename std::list<Node<T>>::iterator;
         using MapIter  = typename std::unordered_map<Key, ListIter>::iterator;
 
         std::unordered_map<Key, ListIter> Map; 
+
 
         size_t hits() const 
         {
             return HitsNumber;
         }
 
+
         void NewPageInsert(const Node<T>& NewPage)
         {
             ListIter InsertedPage;
 
+            // If list <In> is not full, just inserting new page
+            // Otherwise, popping out last element of <Out>, 
+            // moving last element of <In> to begining of <Out>
+            // and finally insert new page into <In> list
             if(In.IsFull())
             {
                 MapIter LastNodeIN = Map.find(In.List.back().data);
@@ -115,6 +126,7 @@ namespace Caches
         {
             MapIter CurPage = Map.find(Page.data);
 
+            // If there is no needed page in cache, insert it
             if(CurPage == Map.end())
             {
                 NewPageInsert(Page);
@@ -124,6 +136,8 @@ namespace Caches
             {
                 ++HitsNumber;
 
+                // But if cache has needed page, do what 2QCache assumes
+                // depending on what list type where hit was
                 switch(CurPage->second->Type)
                 {
                     case IN:    return;
