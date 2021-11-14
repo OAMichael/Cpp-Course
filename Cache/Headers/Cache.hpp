@@ -170,7 +170,6 @@ namespace Caches
 
         Cache2Q() {}
         Cache2Q(const size_t NewSize) : CacheSize{NewSize} {}
-
     };
 }
 
